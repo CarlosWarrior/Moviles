@@ -8,6 +8,7 @@ class MainProvider extends ChangeNotifier{
   List<Map<String, dynamic>> _cafes = List<Map<String, dynamic>>.generate(20, (i) => {
     "id": "$i",
     "title": "Cafe $i",
+    "rating": "${(Random().nextDouble() * 5).toStringAsFixed(2)}",
     "image": "https://placehold.co/600x400.png",
     "foods": List<Map<String, dynamic>>.generate(10, (f) => {
       "title": "Food $f",

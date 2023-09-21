@@ -13,7 +13,7 @@ class Cafes extends StatelessWidget {
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(15.0),
+            padding: EdgeInsets.all(15.0),
             child: TextField(
               onChanged: context.watch<MainProvider>().search,
               controller: context.watch<MainProvider>().query,
@@ -30,23 +30,22 @@ class Cafes extends StatelessWidget {
               itemCount: context.watch<MainProvider>().cafes.length,
               itemBuilder: (context, index) =>
                 Card(
-                  margin: EdgeInsets.only(top:20),
+                  margin: EdgeInsets.all(20),
                   child: InkWell(
                     splashColor: Colors.blue.withAlpha(30),
                     onTap: () => context.read<MainProvider>().goToCafe(context.read<MainProvider>().cafes[index]["id"], context),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children:[
-                        ListTile(
-                          title: Text(context.watch<MainProvider>().cafes[index]["title"]!),
-                          leading: Image.network(context.watch<MainProvider>().cafes[index]["image"]!),
-                          trailing: Column(
-                            children: [
-                              Icon(Icons.star, color: Colors.amber,)
-                            ],
-                          )
-                        ),
-                      ],
+                    child: ListTile(
+                      title: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(context.watch<MainProvider>().cafes[index]["title"]!),
+                      ),
+                      leading: Image.network(context.watch<MainProvider>().cafes[index]["image"]!),
+                      trailing: Column(
+                        children: [
+                          Icon(Icons.star, color: Colors.amber,),
+                          Text(context.watch<MainProvider>().cafes[index]["rating"]!)
+                        ],
+                      )
                     ),
                   ),
                 ),
