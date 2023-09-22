@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:proyecto/menu.dart';
 
 class Cafe extends StatelessWidget {
   final Map<String, dynamic> cafe;
@@ -6,6 +7,11 @@ class Cafe extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    seeMenu(){
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => Menu(cafe: cafe) )
+      );
+    }
     return Scaffold(
       appBar: AppBar(
         title:  Text(cafe["title"]),
@@ -13,22 +19,7 @@ class Cafe extends StatelessWidget {
       body:  Column(
         children: [
           Image.network(cafe["image"]),
-          Expanded(
-            child: Center(
-              child: ListView.builder(
-                scrollDirection: Axis.vertical,
-                shrinkWrap: true,
-                itemCount: cafe["foods"].length,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    leading: Icon(Icons.star, color: Colors.amber,),
-                    title: Text(cafe["foods"][index]["title"]),
-                    trailing: Text("\$ ${cafe["foods"][index]["price"]}"),
-                  );
-                },
-              ),
-            ),
-          ) 
+          MaterialButton(onPressed: seeMenu, child: Text("menu"),)
         ],
       )
     );
