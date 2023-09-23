@@ -29,7 +29,10 @@ class Cafe extends StatelessWidget {
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
-                      Text(cafe["description"]),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(cafe["description"]),
+                      ),
                       CafeMap(lat: cafe["lat"], lng: cafe["lng"])
                     ],
                   ),
