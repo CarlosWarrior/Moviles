@@ -17,7 +17,8 @@ class CoffeCardComponent extends StatelessWidget {
     return Card(
       margin: EdgeInsets.all(8),
       child: InkWell(
-        splashColor: Colors.blue.withAlpha(30),
+        splashColor: Colors.deepOrangeAccent[100],
+        borderRadius: BorderRadius.circular(8),
         onTap: () {},
         child: Stack(
           children: [
@@ -29,7 +30,7 @@ class CoffeCardComponent extends StatelessWidget {
                     colors: [
                       Colors.transparent,
                       Colors.transparent,
-                      Colors.black
+                      Colors.black87
                     ],
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,

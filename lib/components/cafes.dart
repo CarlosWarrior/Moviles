@@ -37,7 +37,9 @@ class Cafes extends StatelessWidget {
                 itemBuilder: (BuildContext context, int index) {
                   var coffe = context.read<MainProvider>().cafes[index];
                   return CoffeCardComponent(
-                    image: Image.network(coffe["image"]!, fit: BoxFit.cover),
+                    image: Ink.image(
+                        image: NetworkImage(coffe["image"]!),
+                        fit: BoxFit.cover),
                     title: coffe["title"]!,
                     rating: coffe["rating"]!,
                     id: coffe["id"]!,
