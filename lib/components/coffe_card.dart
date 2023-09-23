@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:proyecto/cafe.dart';
+import 'package:proyecto/main_provider.dart';
 
 class CoffeCardComponent extends StatelessWidget {
   final String id;
@@ -19,7 +22,13 @@ class CoffeCardComponent extends StatelessWidget {
       child: InkWell(
         splashColor: Colors.deepOrangeAccent[100],
         borderRadius: BorderRadius.circular(8),
-        onTap: () {},
+        onTap: () {
+          var cafe = context.read<MainProvider>().cafes.firstWhere(
+              (el) => context.read<MainProvider>().findCafeById(el, id));
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => Cafe(cafe: cafe)),
+          );
+        },
         child: Stack(
           children: [
             Positioned.fill(child: image),
