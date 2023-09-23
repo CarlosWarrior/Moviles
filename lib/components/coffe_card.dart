@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:proyecto/cafe.dart';
+import 'package:proyecto/pages/cafe.dart';
 import 'package:proyecto/main_provider.dart';
 
 class CoffeCardComponent extends StatelessWidget {

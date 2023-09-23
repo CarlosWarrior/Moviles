@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:proyecto/components/cafes.dart';
+import 'package:proyecto/pages/cafes.dart';
 import 'package:proyecto/main_provider.dart';
 
 class HomePage extends StatelessWidget {
