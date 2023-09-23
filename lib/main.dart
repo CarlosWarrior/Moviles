@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:proyecto/cafes.dart';
-import 'package:provider/provider.dart';
-import 'package:proyecto/main_provider.dart';
-import 'package:proyecto/pages/login_page.dart';
-import 'package:proyecto/pages/sign_in_page.dart';
+import 'package:proyecto/pages/home_page.dart';
 
 void main() => runApp(MyApp());
 
@@ -17,7 +13,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: SignInPage(),
+      home: HomePage(),
     );
   }
 }
