@@ -13,7 +13,6 @@ class Cafe extends StatelessWidget {
         MaterialPageRoute(builder: (context) => Menu(cafe: cafe) )
       );
     }
-    final PageController controller = PageController();
 
     return Scaffold(
       appBar: AppBar(
