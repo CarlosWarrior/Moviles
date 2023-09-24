@@ -45,8 +45,9 @@ class HomePage extends StatelessWidget {
             ListTile(
               title: Text("Mis favoritos"),
               leading: Icon(Icons.favorite),
-              onTap: () {
-                Navigator.pop(context);
+              onTap: () async {
+                Navigator.of(context).pop();
+                await Navigator.of(context).pushNamed('/favorites');
               },
             ),
             ListTile(

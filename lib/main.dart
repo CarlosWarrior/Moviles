@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:proyecto/pages/favorites_page.dart';
 import 'package:proyecto/pages/home_page.dart';
 import 'package:proyecto/pages/my_profile/my_profile_page.dart';
 
@@ -16,6 +17,7 @@ class MyApp extends StatelessWidget {
         ),
         routes: {
           '/my_profile': (context) => MyProfilePage(),
+          '/favorites': (context) => FavoritePage(cafe: {})
         },
         home: HomePage());
   }

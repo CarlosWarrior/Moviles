@@ -12,27 +12,36 @@ class Menu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController commentController = context.watch<MainProvider>().foodComment;
-    rateTaste(double rating){
+    TextEditingController commentController =
+        context.watch<MainProvider>().foodComment;
+    rateTaste(double rating) {
       context.read<MainProvider>().rateTaste(rating);
     }
-    ratePrice(double rating){
+
+    ratePrice(double rating) {
       context.read<MainProvider>().ratePrice(rating);
     }
-    pushRating(){
+
+    pushRating() {
       context.read<MainProvider>().pushFoodRating();
     }
-    showComment(Map<String, dynamic> food){
+
+    showComment(Map<String, dynamic> food) {
       return showDialog(
         context: context,
         barrierDismissible: false, // user must tap button!
         builder: (BuildContext context) {
-          addRating(){
+          addRating() {
             pushRating();
             Navigator.of(context).pop();
           }
+
           return AlertDialog(
-            title: Text("Calificar platillo ${food['title']}"),
+            title: Row(
+              children: [
+                Text("Calificar platillo ${food['title']}"),
+              ],
+            ),
             content: SingleChildScrollView(
               child: ListBody(
                 children: <Widget>[
@@ -52,7 +61,8 @@ class Menu extends StatelessWidget {
                                 direction: Axis.horizontal,
                                 allowHalfRating: true,
                                 itemCount: 5,
-                                itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                                itemPadding:
+                                    EdgeInsets.symmetric(horizontal: 4.0),
                                 itemBuilder: (context, _) => Icon(
                                   Icons.star,
                                   color: Colors.amber,
@@ -71,7 +81,8 @@ class Menu extends StatelessWidget {
                                 direction: Axis.horizontal,
                                 allowHalfRating: true,
                                 itemCount: 5,
-                                itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                                itemPadding:
+                                    EdgeInsets.symmetric(horizontal: 4.0),
                                 itemBuilder: (context, _) => Icon(
                                   Icons.star,
                                   color: Colors.amber,
@@ -84,8 +95,9 @@ class Menu extends StatelessWidget {
                       ),
                     ),
                   ),
-                   TextField(
-                    minLines: 6, // any number you need (It works as the rows for the textarea)
+                  TextField(
+                    minLines:
+                        6, // any number you need (It works as the rows for the textarea)
                     keyboardType: TextInputType.multiline,
                     maxLines: null,
                     decoration: InputDecoration(hintText: "¿Algún comentario?"),
@@ -101,13 +113,16 @@ class Menu extends StatelessWidget {
               ),
               TextButton(
                 child: const Text('Cancelar'),
-                onPressed: (){Navigator.of(context).pop();},
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
               ),
             ],
           );
         },
       );
     }
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Menu de ${cafe['title']}"),
@@ -120,8 +135,17 @@ class Menu extends StatelessWidget {
           itemBuilder: (context, index) {
             return GestureDetector(
               onTap: () => showComment(cafe["foods"][index]),
+              //estrellas de favorito
               child: ListTile(
-                leading: Icon(Icons.star, color: Colors.amber,),
+                leading: IconButton(
+                  icon: Icon(Icons.favorite_border),
+                  color: Colors.red,
+                  onPressed: () {
+                    context
+                        .read<MainProvider>()
+                        .addToFavorite(cafe["foods"][index]["id"].toString());
+                  },
+                ),
                 title: Text(cafe["foods"][index]["title"]),
                 trailing: Text("\$ ${cafe["foods"][index]["price"]}"),
               ),
