@@ -45,14 +45,20 @@ class MainProvider extends ChangeNotifier {
         .push(MaterialPageRoute(builder: (context) => Cafe(cafe: cafe)));
   }
 
-  double _foodRating = 0.0;
+  double _foodTasteRating = 0.0;
+  double _foodPriceRating = 0.0;
   TextEditingController foodComment = TextEditingController();
-  rateFood(double rating){
-    _foodRating = rating;
+  rateTaste(double rating){
+    _foodTasteRating = rating;
+  }
+  ratePrice(double rating){
+    _foodPriceRating = rating;
   }
 
   pushFoodRating(){
-    print("${foodComment.text} , ${_foodRating.toString()}");
-    _foodRating = 0.0;
+    print("${foodComment.text} , ${_foodTasteRating.toString()}, ${_foodPriceRating.toString()}");
+    _foodTasteRating = 0.0;
+    _foodPriceRating = 0.0;
+
   }
 }

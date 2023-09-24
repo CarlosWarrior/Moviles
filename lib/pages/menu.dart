@@ -13,8 +13,11 @@ class Menu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     TextEditingController commentController = context.watch<MainProvider>().foodComment;
-    rate(double rating){
-      context.read<MainProvider>().rateFood(rating);
+    rateTaste(double rating){
+      context.read<MainProvider>().rateTaste(rating);
+    }
+    ratePrice(double rating){
+      context.read<MainProvider>().ratePrice(rating);
     }
     pushRating(){
       context.read<MainProvider>().pushFoodRating();
@@ -24,7 +27,7 @@ class Menu extends StatelessWidget {
         context: context,
         barrierDismissible: false, // user must tap button!
         builder: (BuildContext context) {
-          _rate(){
+          addRating(){
             pushRating();
             Navigator.of(context).pop();
           }
@@ -37,19 +40,47 @@ class Menu extends StatelessWidget {
                   Center(
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: RatingBar.builder(
-                        initialRating: 0,
-                        minRating: 1,
-                        maxRating: 5,
-                        direction: Axis.horizontal,
-                        allowHalfRating: true,
-                        itemCount: 5,
-                        itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                        itemBuilder: (context, _) => Icon(
-                          Icons.star,
-                          color: Colors.amber,
-                        ),
-                        onRatingUpdate: rate,
+                      child: Column(
+                        children: [
+                          Column(
+                            children: [
+                              Text("Sabor"),
+                              RatingBar.builder(
+                                initialRating: 0,
+                                minRating: 1,
+                                maxRating: 5,
+                                direction: Axis.horizontal,
+                                allowHalfRating: true,
+                                itemCount: 5,
+                                itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                                itemBuilder: (context, _) => Icon(
+                                  Icons.star,
+                                  color: Colors.amber,
+                                ),
+                                onRatingUpdate: rateTaste,
+                              ),
+                            ],
+                          ),
+                          Column(
+                            children: [
+                              Text("Precio"),
+                              RatingBar.builder(
+                                initialRating: 0,
+                                minRating: 1,
+                                maxRating: 5,
+                                direction: Axis.horizontal,
+                                allowHalfRating: true,
+                                itemCount: 5,
+                                itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                                itemBuilder: (context, _) => Icon(
+                                  Icons.star,
+                                  color: Colors.amber,
+                                ),
+                                onRatingUpdate: ratePrice,
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -66,7 +97,7 @@ class Menu extends StatelessWidget {
             actions: <Widget>[
               TextButton(
                 child: const Text('Calificar'),
-                onPressed: _rate,
+                onPressed: addRating,
               ),
               TextButton(
                 child: const Text('Cancelar'),
