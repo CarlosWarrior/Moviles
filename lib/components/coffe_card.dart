@@ -22,13 +22,7 @@ class CoffeCardComponent extends StatelessWidget {
       child: InkWell(
         splashColor: Colors.deepOrangeAccent[100],
         borderRadius: BorderRadius.circular(8),
-        onTap: () {
-          var cafe = context.read<MainProvider>().cafes.firstWhere(
-              (el) => context.read<MainProvider>().findCafeById(el, id));
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => Cafe(cafe: cafe)),
-          );
-        },
+        onTap: () => context.read<MainProvider>().goToCafe(id, context),
         child: ClipRRect(
           child: Stack(
             children: [
