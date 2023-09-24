@@ -38,7 +38,12 @@ class Cafe extends StatelessWidget {
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text(cafe["description"]),
+                        child: Column(
+                          children: [
+                            Text(cafe["schedule"]),
+                            Text(cafe["description"]),
+                          ],
+                        ),
                       ),
                       CafeMap(lat: cafe["lat"], lng: cafe["lng"])
                     ],

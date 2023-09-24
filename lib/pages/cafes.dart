@@ -17,15 +17,18 @@ class Cafes extends StatelessWidget {
           children: [
             Padding(
               padding: EdgeInsets.all(15.0),
-              child: TextField(
-                onChanged: context.watch<MainProvider>().search,
-                controller: context.watch<MainProvider>().query,
-                decoration: InputDecoration(
-                    labelText: "Buscar",
-                    hintText: "Buscar",
-                    prefixIcon: Icon(Icons.search),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(25.0)))),
+              child: ListTile(
+                title: TextField(
+                  onChanged: context.watch<MainProvider>().search,
+                  controller: context.watch<MainProvider>().query,
+                  decoration: InputDecoration(
+                      labelText: "Buscar",
+                      hintText: "Buscar",
+                      prefixIcon: Icon(Icons.search),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(25.0)))),
+                ),
+                trailing: IconButton(icon: Icon(Icons.sort), onPressed: context.watch<MainProvider>().sort,),
               ),
             ),
             Expanded(

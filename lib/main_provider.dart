@@ -5,15 +5,16 @@ import 'package:proyecto/pages/cafe.dart';
 
 class MainProvider extends ChangeNotifier {
   List<Map<String, dynamic>> _cafes = List<Map<String, dynamic>>.generate(
-      10,
+      15,
       (i) => {
         "id": "$i",
         "title": "Cafe $i",
         "rating": "${(Random().nextDouble() * 5).toStringAsFixed(2)}",
         "image": "https://placehold.co/600x400.png",
+        "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+        "schedule": "9:00 - 18:00",
         "lat":20.606931,
         "lng":-103.416727,
-        "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
         "foods": List<Map<String, dynamic>>.generate(
             20,
             (f) => {
@@ -33,6 +34,9 @@ class MainProvider extends ChangeNotifier {
   TextEditingController query = TextEditingController();
   search(String value) {
     notifyListeners();
+  }
+  sort(){
+
   }
 
   findCafeById(Map<String, dynamic> cafe, String id) {
