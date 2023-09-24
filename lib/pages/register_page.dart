@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:proyecto/pages/register_page.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class RegisterPage extends StatefulWidget {
+  const RegisterPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _RegisterPageState extends State<RegisterPage> {
+  TextEditingController _nameController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
   final RegExp _emailRegex = RegExp(
@@ -25,8 +25,34 @@ class _LoginPageState extends State<LoginPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                "Iniciar sesion",
+                "Registrarse",
                 style: Theme.of(context).textTheme.headlineLarge,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 8, bottom: 8),
+                child: Column(
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      child: Text(
+                        "Nombre",
+                        style: Theme.of(context).textTheme.labelLarge,
+                        textAlign: TextAlign.start,
+                      ),
+                    ),
+                    TextFormField(
+                      controller: _nameController,
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(Icons.person),
+                        labelText: "Nombre",
+                        hintText: "Nombre",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 8, bottom: 8),
@@ -95,25 +121,18 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ],
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Checkbox(value: true, onChanged: (value) {}),
-                  Text("Mantenerme conectado"),
-                ],
-              ),
               Container(
                 padding: const EdgeInsets.only(top: 8, bottom: 8),
                 width: double.infinity,
                 child: MaterialButton(
                   onPressed: () {
-                    // TODO: Login
+                    // TODO: register
                   },
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
                   color: Theme.of(context).primaryColor,
-                  child: Text("LOGIN"),
+                  child: Text("REGISTRARSE"),
                 ),
               ),
               Text(
@@ -124,10 +143,10 @@ class _LoginPageState extends State<LoginPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("No tienes cuenta?"),
+                  Text("Tienes cuenta?"),
                   TextButton(
-                    onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => RegisterPage())),
-                    child: Text("Registrate"),
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: Text("Iniciar Sesión"),
                   ),
                 ],
               ),
