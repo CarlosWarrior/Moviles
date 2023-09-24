@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:proyecto/components/map.dart';
+import 'package:proyecto/main_provider.dart';
 import 'package:proyecto/pages/menu.dart';
 
 class Cafe extends StatelessWidget {
@@ -10,7 +12,12 @@ class Cafe extends StatelessWidget {
   Widget build(BuildContext context) {
     seeMenu(){
       Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => Menu(cafe: cafe) )
+        MaterialPageRoute(builder: (context) => 
+            ChangeNotifierProvider(
+            create: (context) => MainProvider(),
+            child: Menu(cafe: cafe),
+          )
+        )
       );
     }
 
