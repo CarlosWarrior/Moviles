@@ -52,8 +52,9 @@ class HomePage extends StatelessWidget {
             ListTile(
               title: Text("Mi perfil"),
               leading: Icon(Icons.person),
-              onTap: () {
-                Navigator.pop(context);
+              onTap: () async {
+                Navigator.of(context).pop();
+                await Navigator.of(context).pushNamed('/my_profile');
               },
             ),
             ListTile(

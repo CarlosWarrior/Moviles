@@ -29,53 +29,67 @@ class CoffeCardComponent extends StatelessWidget {
             MaterialPageRoute(builder: (context) => Cafe(cafe: cafe)),
           );
         },
-        child: Stack(
-          children: [
-            Positioned.fill(child: image),
-            Positioned.fill(
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.transparent,
-                      Colors.transparent,
-                      Colors.black87
-                    ],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
+        child: ClipRRect(
+          child: Stack(
+            children: [
+              Positioned.fill(child: image),
+              Positioned(
+                top: 0,
+                left: 0,
+                child: Container(
+                  height: 50,
+                  width: 100,
+                  decoration: BoxDecoration(
+                    color: Colors.black87,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(8),
+                      bottomRight: Radius.circular(32),
+                    ),
+                  ),
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      title,
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleLarge!
+                          .copyWith(color: Colors.white),
+                    ),
                   ),
                 ),
               ),
-            ),
-            Positioned.fill(
-              top: null,
-              child: Container(
-                child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            title,
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleMedium!
-                                .copyWith(color: Colors.white),
-                          ),
-                        ),
-                        Icon(Icons.star, color: Colors.yellow),
-                        Text(
-                          "$rating",
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleMedium!
-                              .copyWith(color: Colors.white),
-                        ),
-                      ],
-                    )),
+              Positioned(
+                bottom: 0,
+                right: 0,
+                child: Container(
+                  height: 50,
+                  width: 100,
+                  decoration: BoxDecoration(
+                    color: Colors.black87,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(32),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.star,
+                        color: Colors.yellow[700],
+                      ),
+                      Text(
+                        rating,
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleLarge!
+                            .copyWith(color: Colors.white),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
