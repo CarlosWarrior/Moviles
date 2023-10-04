@@ -1,32 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:provider/provider.dart';
-import 'package:proyecto/main_provider.dart';
+import 'package:proyecto/bloc/cafeterias_bloc.dart';
+import 'package:proyecto/models/cafeteria.dart';
+import 'package:proyecto/models/food.dart';
 
 class Menu extends StatelessWidget {
+  final Cafeteria cafeteria;
   const Menu({
+    required this.cafeteria,
     super.key,
-    required this.cafe,
   });
-  final Map<String, dynamic> cafe;
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController commentController =
-        context.watch<MainProvider>().foodComment;
+    TextEditingController commentController = context.watch<CafeteriasBloc>().foodComment;
     rateTaste(double rating) {
-      context.read<MainProvider>().rateTaste(rating);
+      context.read<CafeteriasBloc>().rateTaste(rating);
     }
 
     ratePrice(double rating) {
-      context.read<MainProvider>().ratePrice(rating);
+      context.read<CafeteriasBloc>().ratePrice(rating);
     }
 
     pushRating() {
-      context.read<MainProvider>().pushFoodRating();
+      context.read<CafeteriasBloc>().pushFoodRating();
     }
 
-    showComment(Map<String, dynamic> food) {
+
+    addToFavorite() {
+      
+    }
+
+    showComment(Food food) {
       return showDialog(
         context: context,
         barrierDismissible: false, // user must tap button!
@@ -39,7 +45,7 @@ class Menu extends StatelessWidget {
           return AlertDialog(
             title: Row(
               children: [
-                Text("Calificar platillo ${food['title']}"),
+                Text("Calificar platillo ${food.title}"),
               ],
             ),
             content: SingleChildScrollView(
@@ -122,32 +128,28 @@ class Menu extends StatelessWidget {
         },
       );
     }
-
     return Scaffold(
       appBar: AppBar(
-        title: Text("Menu de ${cafe['title']}"),
+        title: Text("Menu de ${cafeteria.title}"),
+        leading: IconButton(onPressed: () => context.read<CafeteriasBloc>().add(SelectCafeteriasEvent()), icon: Icon(Icons.arrow_back_ios)),
       ),
       body: Center(
         child: ListView.builder(
           scrollDirection: Axis.vertical,
           shrinkWrap: true,
-          itemCount: cafe["foods"].length,
+          itemCount: cafeteria.foods!.length,
           itemBuilder: (context, index) {
             return GestureDetector(
-              onTap: () => showComment(cafe["foods"][index]),
+              onTap: () => showComment(cafeteria.foods![index]),
               //estrellas de favorito
               child: ListTile(
                 leading: IconButton(
                   icon: Icon(Icons.favorite_border),
                   color: Colors.red,
-                  onPressed: () {
-                    context
-                        .read<MainProvider>()
-                        .addToFavorite(cafe["foods"][index]["id"].toString());
-                  },
+                  onPressed: addToFavorite,
                 ),
-                title: Text(cafe["foods"][index]["title"]),
-                trailing: Text("\$ ${cafe["foods"][index]["price"]}"),
+                title: Text(cafeteria.foods![index].title!),
+                trailing: Text("\$ ${cafeteria.foods![index].price!.toString()}"),
               ),
             );
           },

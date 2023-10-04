@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:proyecto/pages/Auth/register_page.dart';
 
-class SignInPage extends StatefulWidget {
-  const SignInPage({super.key});
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
 
   @override
-  State<SignInPage> createState() => _SignInPageState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
-class _SignInPageState extends State<SignInPage> {
+class _LoginPageState extends State<LoginPage> {
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
-  TextEditingController _repeatPasswordController = TextEditingController();
   final RegExp _emailRegex = RegExp(
       r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$");
 
@@ -25,7 +25,7 @@ class _SignInPageState extends State<SignInPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                "Crear cuenta",
+                "Iniciar sesion",
                 style: Theme.of(context).textTheme.headlineLarge,
               ),
               Padding(
@@ -95,39 +95,11 @@ class _SignInPageState extends State<SignInPage> {
                   ),
                 ],
               ),
-              Column(
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Container(
-                    width: double.infinity,
-                    child: Text(
-                      "Repetir contraseña",
-                      style: Theme.of(context).textTheme.labelLarge,
-                      textAlign: TextAlign.start,
-                    ),
-                  ),
-                  TextFormField(
-                    obscureText: true,
-                    enableSuggestions: false,
-                    autocorrect: false,
-                    controller: _repeatPasswordController,
-                    decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.lock),
-                      labelText: "Repetir contraseña",
-                      hintText: "Repetir contraseña",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Ingrese un password";
-                      }
-                      if (value != _passwordController.text) {
-                        return "Las contraseñas no coinciden";
-                      }
-                      return null;
-                    },
-                  ),
+                  Checkbox(value: true, onChanged: (value) {}),
+                  Text("Mantenerme conectado"),
                 ],
               ),
               Container(
@@ -141,7 +113,7 @@ class _SignInPageState extends State<SignInPage> {
                     borderRadius: BorderRadius.circular(16),
                   ),
                   color: Theme.of(context).primaryColor,
-                  child: Text("CREAR CUENTA"),
+                  child: Text("LOGIN"),
                 ),
               ),
               Text(
@@ -152,10 +124,12 @@ class _SignInPageState extends State<SignInPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("Ya tienes cuenta?"),
+                  Text("No tienes cuenta?"),
                   TextButton(
-                    onPressed: () {},
-                    child: Text("Inicia sesión"),
+                    onPressed: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                            builder: (context) => RegisterPage())),
+                    child: Text("Registrate"),
                   ),
                 ],
               ),

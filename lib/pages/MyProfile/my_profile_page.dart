@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:proyecto/pages/my_profile/change_password_alert.dart';
+import 'package:proyecto/pages/MyProfile/change_password_alert.dart';
 
 class MyProfilePage extends StatelessWidget {
   final String name = 'Usuario';

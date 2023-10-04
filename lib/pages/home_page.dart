@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:proyecto/pages/cafes.dart';
-import 'package:proyecto/main_provider.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -38,8 +35,9 @@ class HomePage extends StatelessWidget {
             ListTile(
               title: Text("Ver cafeterias"),
               leading: Icon(Icons.coffee),
-              onTap: () {
+              onTap: () async {
                 Navigator.pop(context);
+                await Navigator.of(context).pushNamed('/cafeterias');
               },
             ),
             ListTile(
@@ -67,10 +65,6 @@ class HomePage extends StatelessWidget {
             ),
           ],
         ),
-      ),
-      body: ChangeNotifierProvider(
-        create: (context) => MainProvider(),
-        child: Cafes(),
       ),
     );
   }
