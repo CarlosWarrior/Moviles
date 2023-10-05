@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-// import 'package:firebase_core/firebase_core.dart';
-// import 'firebase_options.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:proyecto/bloc/cafeterias_bloc.dart';
 import 'package:proyecto/pages/Auth/login_page.dart';
@@ -17,9 +15,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // await Firebase.initializeApp(
-    //   options: DefaultFirebaseOptions.currentPlatform,
-    // );
     return MultiBlocProvider(
       providers: [
         BlocProvider(
