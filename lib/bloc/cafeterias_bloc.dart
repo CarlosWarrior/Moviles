@@ -9,7 +9,7 @@ import 'package:proyecto/models/cafeteria.dart';
 part 'cafeterias_event.dart';
 part 'cafeterias_state.dart';
 
-String cafeteriasUrl = "http://localhost:3000/cafeterias";
+String cafeteriasUrl = "https://us-west1-appsmoviles-proyecto.cloudfunctions.net/cafeterias";
 class CafeteriasBloc extends Bloc<CafeteriasEvent, CafeteriasState> {
   CafeteriasBloc() : super(CafeteriasInitial()) {
     on<GetCafeteriasEvent>(_getCafeterias);

@@ -28,7 +28,7 @@ class Cafeteria extends Equatable {
   });
 
   factory Cafeteria.fromMap(Map<String, dynamic> data) => Cafeteria(
-        id: data['id'] as String?,
+        id: data['_id'] as String?,
         title: data['title'] as String?,
         rating: data['rating'] as double?,
         image: data['image'] as String?,
