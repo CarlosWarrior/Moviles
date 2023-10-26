@@ -32,6 +32,8 @@ class Menu extends StatelessWidget {
       
     }
 
+
+    context.read<CafeteriasBloc>().requestPermissions(); 
     showComment(Food food) {
       return showDialog(
         context: context,
@@ -109,6 +111,10 @@ class Menu extends StatelessWidget {
                     decoration: InputDecoration(hintText: "¿Algún comentario?"),
                     controller: commentController,
                   ),
+                  Visibility(
+                    visible: context.watch<CafeteriasBloc>().permissionsAccepted,
+                    child: Text("Open Camera"),
+                  )
                 ],
               ),
             ),

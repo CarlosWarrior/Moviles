@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:proyecto/models/cafeteria.dart';
 
 part 'cafeterias_event.dart';
@@ -44,6 +45,53 @@ class CafeteriasBloc extends Bloc<CafeteriasEvent, CafeteriasState> {
     _foodTasteRating = 0.0;
     _foodPriceRating = 0.0;
   }
+
+  bool permissionsAccepted = false;
+  Future<void> requestPermissions() async{
+
+    PermissionStatus cameraPermission = await Permission.camera.status;
+    if (cameraPermission.isDenied) {
+      await Permission.camera.request();
+      cameraPermission = await Permission.camera.status;
+      if (cameraPermission.isDenied) 
+          await openAppSettings();
+    }
+    else if (cameraPermission.isPermanentlyDenied)
+      await openAppSettings();
+
+    PermissionStatus mediaLibraryPermission = await Permission.photos.status;
+    if (mediaLibraryPermission.isDenied) {
+      await Permission.mediaLibrary.request();
+      mediaLibraryPermission = await Permission.mediaLibrary.status;
+      if (mediaLibraryPermission.isDenied)
+          await openAppSettings();
+    }
+    else if (mediaLibraryPermission.isPermanentlyDenied) 
+      await openAppSettings();
+    
+    PermissionStatus photosPermission = await Permission.photos.status;
+    if (photosPermission.isDenied) {
+      await Permission.photos.request();
+      photosPermission = await Permission.photos.status;
+      if (photosPermission.isDenied)
+          await openAppSettings();
+    }
+    else if (photosPermission.isPermanentlyDenied) 
+      await openAppSettings();
+
+    PermissionStatus storagePermission = await Permission.storage.status;
+    if (storagePermission.isDenied) {
+      await Permission.storage.request();
+      storagePermission = await Permission.storage.status;
+      if (storagePermission.isDenied)
+          await openAppSettings();
+    }
+    else if (storagePermission.isPermanentlyDenied) 
+      await openAppSettings();
+  
+    this.permissionsAccepted = cameraPermission.isGranted && storagePermission.isGranted && (photosPermission.isGranted || photosPermission.isLimited) && mediaLibraryPermission.isGranted;
+  }
+
 
 
   Future<void> _getCafeterias(GetCafeteriasEvent event, Emitter emit) async {
