@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:proyecto/bloc/cafeterias_bloc.dart';
 import 'package:proyecto/components/coffe_card.dart';
 import 'package:proyecto/models/cafeteria.dart';
+import 'package:proyecto/pages/Cafeterias/cafeteria_element_page.dart';
 
 class CafeteriasList extends StatelessWidget {
   final TextEditingController query;
@@ -56,6 +57,7 @@ class CafeteriasList extends StatelessWidget {
                       onTap: () {
                         context.read<CafeteriasBloc>().setCafeteria(cafeteria);
                         context.read<CafeteriasBloc>().add(SelectCafeteriasEvent());
+                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => CafeteriaElementPage(),));
                       },
                       image: Ink.image(
                         image: NetworkImage(cafeteria.image!),

@@ -128,31 +128,36 @@ class Menu extends StatelessWidget {
         },
       );
     }
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Menu de ${cafeteria.title}"),
-        leading: IconButton(onPressed: () => context.read<CafeteriasBloc>().add(SelectCafeteriasEvent()), icon: Icon(Icons.arrow_back_ios)),
-      ),
-      body: Center(
-        child: ListView.builder(
-          scrollDirection: Axis.vertical,
-          shrinkWrap: true,
-          itemCount: cafeteria.foods!.length,
-          itemBuilder: (context, index) {
-            return GestureDetector(
-              onTap: () => showComment(cafeteria.foods![index]),
-              //estrellas de favorito
-              child: ListTile(
-                leading: IconButton(
-                  icon: Icon(Icons.favorite_border),
-                  color: Colors.red,
-                  onPressed: addToFavorite,
+    return WillPopScope(
+      onWillPop: (){
+        context.read<CafeteriasBloc>().add(SelectCafeteriasEvent());
+        return Future.value(true);
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text("Menu de ${cafeteria.title}"),
+        ),
+        body: Center(
+          child: ListView.builder(
+            scrollDirection: Axis.vertical,
+            shrinkWrap: true,
+            itemCount: cafeteria.foods!.length,
+            itemBuilder: (context, index) {
+              return GestureDetector(
+                onTap: () => showComment(cafeteria.foods![index]),
+                //estrellas de favorito
+                child: ListTile(
+                  leading: IconButton(
+                    icon: Icon(Icons.favorite_border),
+                    color: Colors.red,
+                    onPressed: addToFavorite,
+                  ),
+                  title: Text(cafeteria.foods![index].title!),
+                  trailing: Text("\$ ${cafeteria.foods![index].price!.toString()}"),
                 ),
-                title: Text(cafeteria.foods![index].title!),
-                trailing: Text("\$ ${cafeteria.foods![index].price!.toString()}"),
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
       ),
     );
