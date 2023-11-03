@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:proyecto/bloc/auth/auth_bloc.dart';
 import 'package:proyecto/pages/Auth/register_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -11,6 +13,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
+  bool _keepConnected = false;
   final RegExp _emailRegex = RegExp(
       r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$");
 
@@ -98,7 +101,13 @@ class _LoginPageState extends State<LoginPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Checkbox(value: true, onChanged: (value) {}),
+                  Checkbox(
+                      value: true,
+                      onChanged: (value) {
+                        setState(() {
+                          _keepConnected = value!;
+                        });
+                      }),
                   Text("Mantenerme conectado"),
                 ],
               ),
@@ -107,7 +116,13 @@ class _LoginPageState extends State<LoginPage> {
                 width: double.infinity,
                 child: MaterialButton(
                   onPressed: () {
-                    // TODO: Login
+                    BlocProvider.of<AuthBloc>(context).add(
+                      AuthLoginEvent(
+                        email: _emailController.text,
+                        password: _passwordController.text,
+                        keepConnected: _keepConnected,
+                      ),
+                    );
                   },
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
@@ -126,9 +141,8 @@ class _LoginPageState extends State<LoginPage> {
                 children: [
                   Text("No tienes cuenta?"),
                   TextButton(
-                    onPressed: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                            builder: (context) => RegisterPage())),
+                    onPressed: () =>
+                        Navigator.of(context).popAndPushNamed('/register'),
                     child: Text("Registrate"),
                   ),
                 ],

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:proyecto/bloc/auth/auth_bloc.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -126,7 +128,13 @@ class _RegisterPageState extends State<RegisterPage> {
                 width: double.infinity,
                 child: MaterialButton(
                   onPressed: () {
-                    // TODO: register
+                    BlocProvider.of<AuthBloc>(context).add(
+                      AuthRegisterEvent(
+                        name: _nameController.text,
+                        email: _emailController.text,
+                        password: _passwordController.text,
+                      ),
+                    );
                   },
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
@@ -145,7 +153,9 @@ class _RegisterPageState extends State<RegisterPage> {
                 children: [
                   Text("Tienes cuenta?"),
                   TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
+                    onPressed: () => {
+                      Navigator.of(context).popAndPushNamed('/'),
+                    },
                     child: Text("Iniciar Sesión"),
                   ),
                 ],
