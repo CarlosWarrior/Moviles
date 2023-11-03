@@ -1,7 +1,7 @@
 part of 'cafeterias_bloc.dart';
 
 @immutable
-sealed class CafeteriasState extends Equatable{
+sealed class CafeteriasState extends Equatable {
   const CafeteriasState();
 
   @override
@@ -11,20 +11,23 @@ sealed class CafeteriasState extends Equatable{
 final class CafeteriasInitial extends CafeteriasState {}
 
 final class CafeteriasLoadingState extends CafeteriasState {}
+
 final class CafeteriasErrorState extends CafeteriasState {}
+
 final class CafeteriasSuccessState extends CafeteriasState {
   final List<Cafeteria> cafeteriasList;
-  final TextEditingController query;
-  CafeteriasSuccessState({required this.cafeteriasList, required this.query});
+  CafeteriasSuccessState({required this.cafeteriasList});
   @override
-  List<Object> get props => [cafeteriasList, query];
+  List<Object> get props => [cafeteriasList];
 }
+
 final class SelectCafeteriaState extends CafeteriasState {
   final Cafeteria cafeteria;
   SelectCafeteriaState({required this.cafeteria});
   @override
   List<Object> get props => [cafeteria];
 }
+
 final class ViewMenuState extends CafeteriasState {
   final Cafeteria cafeteria;
   ViewMenuState({required this.cafeteria});

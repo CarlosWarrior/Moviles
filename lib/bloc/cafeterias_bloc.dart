@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -23,7 +25,9 @@ class CafeteriasBloc extends Bloc<CafeteriasEvent, CafeteriasState> {
 
   List<Cafeteria> _cafeterias = [];
   Cafeteria? _cafeteria = null;
+
   void setCafeteria(Cafeteria value) => _cafeteria = value;
+
   bool _contains(Cafeteria cafe) {
     return cafe.title
         .toString()
@@ -105,19 +109,37 @@ class CafeteriasBloc extends Bloc<CafeteriasEvent, CafeteriasState> {
 
   Future<void> _getCafeterias(GetCafeteriasEvent event, Emitter emit) async {
     emit(CafeteriasLoadingState());
-    var res = await get(Uri.parse(cafeteriasUrl));
-    if (res.statusCode == 200) {
-      _cafeterias = (jsonDecode(res.body) as List)
-          .map((e) => Cafeteria.fromMap(e))
-          .toList();
+    try {
+      var cafes =
+          await FirebaseDatabase.instance.ref().child("cafeterias").once();
+
+      if (cafes.snapshot.exists) {
+        _cafeterias = (cafes.snapshot.value as Map)
+            .values
+            .map((e) => Cafeteria.fromMap(e))
+            .toList();
+
+        emit(CafeteriasSuccessState(cafeteriasList: _cafeterias));
+      } else {
+        emit(CafeteriasSuccessState(cafeteriasList: []));
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+      emit(CafeteriasErrorState());
     }
-    emit(CafeteriasSuccessState(
-        query: _query, cafeteriasList: _cafeterias.where(_contains).toList()));
   }
 
   void _searchCafeterias(SearchCafeteriasEvent event, Emitter emit) {
-    emit(CafeteriasSuccessState(
-        query: _query, cafeteriasList: _cafeterias.where(_contains).toList()));
+    try {
+      if (event.query.isEmpty) {
+        emit(CafeteriasSuccessState(cafeteriasList: _cafeterias));
+      } else {
+        var filtered = _cafeterias.where((element) => _contains(element));
+        emit(CafeteriasSuccessState(cafeteriasList: filtered.toList()));
+      }
+    } catch (e) {
+      emit(CafeteriasErrorState());
+    }
   }
 
   void _selectCafeteria(SelectCafeteriasEvent event, Emitter emit) {

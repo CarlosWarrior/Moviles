@@ -11,13 +11,13 @@ class CafeteriasPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<CafeteriasBloc, CafeteriasState>(
       builder: (context, state) {
-        if(state is CafeteriasSuccessState)
-          return CafeteriasList(cafeterias: state.cafeteriasList, query: state.query);
-        else if(state is CafeteriasLoadingState)
+        if (state is CafeteriasSuccessState)
+          return CafeteriasList(cafeterias: state.cafeteriasList);
+        else if (state is CafeteriasLoadingState)
           return Loading();
-        else if(state is CafeteriasErrorState)
+        else if (state is CafeteriasErrorState)
           return Loading();
-        else 
+        else
           return Loading();
       },
     );

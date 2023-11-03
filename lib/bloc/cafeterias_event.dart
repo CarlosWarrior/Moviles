@@ -1,12 +1,22 @@
 part of 'cafeterias_bloc.dart';
 
 @immutable
-sealed class CafeteriasEvent {}
+sealed class CafeteriasEvent extends Equatable {
+  @override
+  List<Object> get props => [];
+}
 
-class GetCafeteriasEvent extends CafeteriasEvent{}
+class GetCafeteriasEvent extends CafeteriasEvent {}
 
-class SearchCafeteriasEvent extends CafeteriasEvent{}
+class SearchCafeteriasEvent extends CafeteriasEvent {
+  final String query;
 
-class SelectCafeteriasEvent extends CafeteriasEvent{}
+  SearchCafeteriasEvent({required this.query});
 
-class ViewMenuEvent extends CafeteriasEvent{}
+  @override
+  List<Object> get props => [query];
+}
+
+class SelectCafeteriasEvent extends CafeteriasEvent {}
+
+class ViewMenuEvent extends CafeteriasEvent {}

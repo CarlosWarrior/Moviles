@@ -5,15 +5,19 @@ import 'package:proyecto/components/coffe_card.dart';
 import 'package:proyecto/models/cafeteria.dart';
 import 'package:proyecto/pages/Cafeterias/cafeteria_element_page.dart';
 
-class CafeteriasList extends StatelessWidget {
-  final TextEditingController query;
+class CafeteriasList extends StatefulWidget {
   final List<Cafeteria> cafeterias;
   const CafeteriasList({
-    required this.query,
     required this.cafeterias,
     super.key,
   });
 
+  @override
+  State<CafeteriasList> createState() => _CafeteriasListState();
+}
+
+class _CafeteriasListState extends State<CafeteriasList> {
+  TextEditingController _query = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,19 +33,21 @@ class CafeteriasList extends StatelessWidget {
                 padding: EdgeInsets.all(15.0),
                 child: ListTile(
                   title: TextField(
-                    onChanged: (_) => context.read<CafeteriasBloc>().add(SearchCafeteriasEvent()),
-                    controller: this.query,
+                    onChanged: (_) => BlocProvider.of<CafeteriasBloc>(context)
+                        .add(SearchCafeteriasEvent(query: _query.text)),
+                    controller: _query,
                     decoration: InputDecoration(
-                        labelText: "Buscar",
-                        hintText: "Buscar",
-                        prefixIcon: Icon(Icons.search),
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(25.0))),
-                        ),
+                      labelText: "Buscar",
+                      hintText: "Buscar",
+                      prefixIcon: Icon(Icons.search),
+                      border: OutlineInputBorder(
+                          borderRadius:
+                              BorderRadius.all(Radius.circular(25.0))),
+                    ),
                   ),
                   trailing: IconButton(
                     icon: Icon(Icons.sort),
-                    onPressed: (){},
+                    onPressed: () {},
                   ),
                 ),
               ),
@@ -50,19 +56,22 @@ class CafeteriasList extends StatelessWidget {
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: _getGridCount(context),
                   ),
-                  itemCount: cafeterias.length,
+                  itemCount: widget.cafeterias.length,
                   itemBuilder: (BuildContext context, int index) {
-                    Cafeteria cafeteria = cafeterias[index];
+                    Cafeteria cafeteria = widget.cafeterias[index];
                     return CoffeCardComponent(
                       onTap: () {
                         context.read<CafeteriasBloc>().setCafeteria(cafeteria);
-                        context.read<CafeteriasBloc>().add(SelectCafeteriasEvent());
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => CafeteriaElementPage(),));
+                        context
+                            .read<CafeteriasBloc>()
+                            .add(SelectCafeteriasEvent());
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => CafeteriaElementPage(),
+                        ));
                       },
                       image: Ink.image(
-                        image: NetworkImage(cafeteria.image!),
-                        fit: BoxFit.cover
-                      ),
+                          image: NetworkImage(cafeteria.image!),
+                          fit: BoxFit.cover),
                       title: cafeteria.title!,
                       rating: cafeteria.rating!.toString(),
                       id: cafeteria.id!,
@@ -76,6 +85,7 @@ class CafeteriasList extends StatelessWidget {
       ),
     );
   }
+
   int _getGridCount(BuildContext context) {
     if (MediaQuery.of(context).size.width > 600) {
       return 3;
