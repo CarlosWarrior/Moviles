@@ -1,14 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:proyecto/bloc/auth/auth_bloc.dart';
+import 'package:proyecto/pages/Auth/login_page.dart';
 import 'package:proyecto/pages/MyProfile/change_password_alert.dart';
 
 class MyProfilePage extends StatelessWidget {
-  final String name = 'Usuario';
   final int comments = 3;
   final int coffeReviews = 2;
   const MyProfilePage({super.key});
 
+  static const imagePlaceholder =
+      'https://i.natgeofe.com/n/548467d8-c5f1-4551-9f58-6817a8d2c45e/NationalGeographic_2572187_square.jpg';
+
   @override
   Widget build(BuildContext context) {
+    return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
+      if (state is AuthSuccess) {
+        return _buildProfile(context, state);
+      } else {
+        return LoginPage();
+      }
+    });
+  }
+
+  Widget _buildProfile(BuildContext context, AuthSuccess state) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Mi perfil'),
@@ -23,16 +38,15 @@ class MyProfilePage extends StatelessWidget {
               style: Theme.of(context).textTheme.displaySmall,
             ),
             Text(
-              name,
+              state.user.displayName!,
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             Stack(
               children: [
                 CircleAvatar(
                   radius: 96,
-                  // TODO: Change this to the user's profile picture
-                  backgroundImage: NetworkImage(
-                      'https://i.natgeofe.com/n/548467d8-c5f1-4551-9f58-6817a8d2c45e/NationalGeographic_2572187_square.jpg'),
+                  backgroundImage:
+                      NetworkImage(state.user.photoURL ?? imagePlaceholder),
                 ),
                 Positioned(
                   bottom: 0,

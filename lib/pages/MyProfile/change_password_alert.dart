@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:proyecto/bloc/auth/auth_bloc.dart';
 
 class ChangePasswordAlert extends StatefulWidget {
   final String id;
@@ -9,8 +11,6 @@ class ChangePasswordAlert extends StatefulWidget {
 }
 
 class _ChangePasswordAlertState extends State<ChangePasswordAlert> {
-  final TextEditingController _currentPasswordController =
-      TextEditingController();
   final TextEditingController _newPasswordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
@@ -22,16 +22,6 @@ class _ChangePasswordAlertState extends State<ChangePasswordAlert> {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          TextField(
-            obscureText: true,
-            enableSuggestions: false,
-            autocorrect: false,
-            controller: _currentPasswordController,
-            decoration: InputDecoration(
-              icon: Icon(Icons.lock),
-              labelText: 'Contraseña actual',
-            ),
-          ),
           TextField(
             obscureText: true,
             enableSuggestions: false,
@@ -63,6 +53,20 @@ class _ChangePasswordAlertState extends State<ChangePasswordAlert> {
         ),
         TextButton(
           onPressed: () {
+            if (_newPasswordController.text !=
+                _confirmPasswordController.text) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Las contraseñas no coinciden'),
+                ),
+              );
+              return;
+            }
+            BlocProvider.of<AuthBloc>(context).add(
+              ChangePasswordEvent(
+                password: _newPasswordController.text,
+              ),
+            );
             Navigator.of(context).pop();
           },
           child: Text('Cambiar'),

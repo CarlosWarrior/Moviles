@@ -19,6 +19,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthRegisterEvent>((event, emit) async {
       await _register(event, emit);
     });
+    on<ChangePasswordEvent>((event, emit) async {
+      await _changePassword(event, emit);
+    });
   }
 
   Future<void> _checkAuth(Emitter<AuthState> emit) async {
@@ -66,6 +69,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
               email: event.email, password: event.password);
       await userCredential.user!.updateDisplayName(event.name);
       emit(AuthSuccess(user: userCredential.user!));
+    } catch (e) {
+      emit(AuthError(message: e.toString()));
+    }
+  }
+
+  Future<void> _changePassword(
+      ChangePasswordEvent event, Emitter<AuthState> emit) async {
+    emit(AuthLoading());
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      await user!.updatePassword(event.password);
+      emit(AuthSuccess(user: user));
     } catch (e) {
       emit(AuthError(message: e.toString()));
     }
