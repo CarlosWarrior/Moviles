@@ -143,6 +143,19 @@ class CafeteriasBloc extends Bloc<CafeteriasEvent, CafeteriasState> {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       _imageFile = File(pickedFile.path);
+    }
+    return await sendThumbnail();
+  }
+
+  Future<void> takeImage(XFile xfile) async {
+    _imageFile = File(xfile.path);
+    print(1);
+    print(_imageFile);
+  }
+  Future<Widget> sendThumbnail()async{
+    print(2);
+    print(_imageFile);
+    if(_imageFile != null){
       return await FilePreview.getThumbnail(_imageFile!.path);
     } else {
       print('No image selected.');

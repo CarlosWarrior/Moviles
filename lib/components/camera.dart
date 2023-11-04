@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
-
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:proyecto/bloc/cafeterias_bloc.dart';
 class CameraApp extends StatefulWidget {
-  const CameraApp({required this.camera, super.key});
   final CameraDescription camera;
+  CameraApp({required this.camera, super.key});
 
   @override
   State<CameraApp> createState() => _CameraAppState();
@@ -41,13 +42,46 @@ class _CameraAppState extends State<CameraApp> {
     super.dispose();
   }
 
+  Future<void> _captureAndUpload() async {
+    try {
+      controller.takePicture()
+        .then((XFile imageFile){
+          print(imageFile);
+          return context.read<CafeteriasBloc>().takeImage(imageFile);
+        }).then((value){    
+          print("popping");
+          Navigator.of(context).pop();
+        });
+        
+    } catch (e) {
+      print("Error capturing and uploading image: $e");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    if (!controller.value.isInitialized) {
-      return Text("Ensure camera persmissions are set");
-    }
-    return MaterialApp(
-      home: CameraPreview(controller),
+    return WillPopScope(
+      onWillPop: () {
+        dispose();
+        return Future.value(true);
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Toma una foto'),
+        ),
+        body: Builder(builder: (context) {
+          if (!controller.value.isInitialized) {
+            return Container();
+          }
+          return CameraPreview(controller);
+        }),
+        floatingActionButton: FloatingActionButton(
+          onPressed: _captureAndUpload,
+          child: Icon(Icons.camera_alt),
+        ),
+      ),
     );
   }
 }
+
+  

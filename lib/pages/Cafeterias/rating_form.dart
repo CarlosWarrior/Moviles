@@ -50,6 +50,10 @@ class _RatingFormState extends State<RatingForm> {
       thumbnail = await context.read<CafeteriasBloc>().pickImage();
       setState((){});
     }
+    requestThumbnail()async{
+      thumbnail = await context.read<CafeteriasBloc>().sendThumbnail();
+      setState((){});
+    }
 
     return WillPopScope(
       onWillPop: () {
@@ -138,11 +142,8 @@ class _RatingFormState extends State<RatingForm> {
                     ElevatedButton(
                       child: Text("Toma una foto"),
                       onPressed: () => Navigator.of(context).push(
-                          MaterialPageRoute(
-                              builder: (context) => CameraApp(
-                                  camera: context
-                                      .read<CafeteriasBloc>()
-                                      .camera))),
+                          MaterialPageRoute(builder: (context) => CameraApp(camera: context.read<CafeteriasBloc>().camera))
+                      ).then((value) => requestThumbnail()),
                     ),
                   ],
                 ),
