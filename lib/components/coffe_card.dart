@@ -6,15 +6,14 @@ class CoffeCardComponent extends StatelessWidget {
   final String title;
   final String rating;
   final VoidCallback onTap;
-  const CoffeCardComponent(
-      {
-        super.key,
-        required this.image,
-        required this.title,
-        required this.rating,
-        required this.id,
-        required this.onTap,
-      });
+  const CoffeCardComponent({
+    super.key,
+    required this.image,
+    required this.title,
+    required this.rating,
+    required this.id,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {

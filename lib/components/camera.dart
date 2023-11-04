@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 
 class CameraApp extends StatefulWidget {
-  
-  const CameraApp({ required this.camera, super.key});
+  const CameraApp({required this.camera, super.key});
   final CameraDescription camera;
 
   @override

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 class FavoritePage extends StatelessWidget {
   const FavoritePage({
     super.key,
@@ -24,9 +25,7 @@ class FavoritePage extends StatelessWidget {
                   leading: IconButton(
                     icon: Icon(Icons.favorite),
                     color: Colors.red,
-                    onPressed: () {
-                      
-                    },
+                    onPressed: () {},
                   ),
                   title: Text("Platillo ${index + 1}"),
                   trailing: Text("\$ ${(index + 1) * 3.25}"),

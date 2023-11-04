@@ -7,17 +7,19 @@ import 'package:proyecto/pages/Cafeterias/menu.dart';
 class MenuPage extends StatelessWidget {
   const MenuPage({super.key});
 
-@override
+  @override
   Widget build(BuildContext context) {
     return BlocBuilder<CafeteriasBloc, CafeteriasState>(
       builder: (context, state) {
-        if(state is ViewMenuState)
-          return Menu(cafeteria: state.cafeteria,);
-        else if(state is CafeteriasLoadingState)
+        if (state is ViewMenuState)
+          return Menu(
+            cafeteria: state.cafeteria,
+          );
+        else if (state is CafeteriasLoadingState)
           return Loading();
-        else if(state is CafeteriasErrorState)
+        else if (state is CafeteriasErrorState)
           return Loading();
-        else 
+        else
           return Loading();
       },
     );

@@ -2,6 +2,8 @@ import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:equatable/equatable.dart';
+import 'package:file_previewer/file_previewer.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -9,6 +11,7 @@ import 'package:proyecto/models/cafeteria.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:camera/camera.dart';
+import 'package:proyecto/models/rating.dart';
 
 part 'cafeterias_event.dart';
 part 'cafeterias_state.dart';
@@ -22,19 +25,11 @@ class CafeteriasBloc extends Bloc<CafeteriasEvent, CafeteriasState> {
   }
 
   final CameraDescription camera;
-  late File _image;
+  File? _imageFile;
   final picker = ImagePicker();
-  Future<void> pickImage() async {
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      _image = File(pickedFile.path);
-    } else {
-      print('No image selected.');
-    }
-  }
-
-
+  FirebaseStorage firestorage = FirebaseStorage.instance;
   FirebaseFirestore firestore = FirebaseFirestore.instance;
+  
   List<Cafeteria> _cafeterias = [];
   Cafeteria? _cafeteria = null;
 
@@ -59,12 +54,20 @@ class CafeteriasBloc extends Bloc<CafeteriasEvent, CafeteriasState> {
   ratePrice(double rating) {
     _foodPriceRating = rating;
   }
-
-  pushFoodRating() {
-    print(
-        "${foodComment.text} , ${_foodTasteRating.toString()}, ${_foodPriceRating.toString()}");
+  clearRating(){
     _foodTasteRating = 0.0;
     _foodPriceRating = 0.0;
+    _imageFile = null;
+  }
+  pushFoodRating()async{
+    print("${foodComment.text} , ${_foodTasteRating.toString()}, ${_foodPriceRating.toString()}");
+    Rating rating = new Rating(cafeteria: _cafeteria!.id, comment: foodComment.text, taste: _foodTasteRating, price: _foodPriceRating, image:"");
+    DocumentReference<Map<String, dynamic>> _rating = await firestore.collection("ratings").add(rating.toMap());
+    if(_imageFile != null){
+      String imageURL = await _uploadImage(_rating.id);
+      await _rating.update({"image":imageURL});
+    }
+    clearRating();
   }
 
   bool permissionsAccepted = false;
@@ -79,28 +82,6 @@ class CafeteriasBloc extends Bloc<CafeteriasEvent, CafeteriasState> {
     } else if (cameraPermission.isPermanentlyDenied) {
       await openAppSettings();
     }
-
-    // PermissionStatus mediaLibraryPermission = await Permission.photos.status;
-    // if (mediaLibraryPermission.isDenied) {
-    //   await Permission.mediaLibrary.request();
-    //   mediaLibraryPermission = await Permission.mediaLibrary.status;
-    //   if (mediaLibraryPermission.isDenied) {
-    //     await openAppSettings();
-    //   }
-    // } else if (mediaLibraryPermission.isPermanentlyDenied) {
-    //   await openAppSettings();
-    // }
-
-    // PermissionStatus photosPermission = await Permission.photos.status;
-    // if (photosPermission.isDenied) {
-    //   await Permission.photos.request();
-    //   photosPermission = await Permission.photos.status;
-    //   if (photosPermission.isDenied) {
-    //     await openAppSettings();
-    //   }
-    // } else if (photosPermission.isPermanentlyDenied) {
-    //   await openAppSettings();
-    // }
 
     PermissionStatus storagePermission;
     // Don't ask for storage permission on Android 13
@@ -122,6 +103,7 @@ class CafeteriasBloc extends Bloc<CafeteriasEvent, CafeteriasState> {
       } else {
         storagePermission = PermissionStatus.granted;
       }
+      this.permissionsAccepted = cameraPermission.isGranted && storagePermission.isGranted;
     } else {
       storagePermission = await Permission.storage.status;
       if (storagePermission.isDenied) {
@@ -133,10 +115,53 @@ class CafeteriasBloc extends Bloc<CafeteriasEvent, CafeteriasState> {
       } else if (storagePermission.isPermanentlyDenied) {
         await openAppSettings();
       }
+      PermissionStatus mediaLibraryPermission = await Permission.photos.status;
+      if (mediaLibraryPermission.isDenied) {
+        await Permission.mediaLibrary.request();
+        mediaLibraryPermission = await Permission.mediaLibrary.status;
+        if (mediaLibraryPermission.isDenied) {
+          await openAppSettings();
+        }
+      } else if (mediaLibraryPermission.isPermanentlyDenied) {
+        await openAppSettings();
+      }
+      PermissionStatus photosPermission = await Permission.photos.status;
+      if (photosPermission.isDenied) {
+        await Permission.photos.request();
+        photosPermission = await Permission.photos.status;
+        if (photosPermission.isDenied) {
+          await openAppSettings();
+        }
+      } else if (photosPermission.isPermanentlyDenied) {
+        await openAppSettings();
+      }
+      this.permissionsAccepted = cameraPermission.isGranted && storagePermission.isGranted && mediaLibraryPermission.isGranted && photosPermission.isGranted;
     }
+  }
 
-    this.permissionsAccepted = cameraPermission.isGranted &&
-        storagePermission.isGranted;
+  Future<Widget> pickImage() async {
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      _imageFile = File(pickedFile.path);
+      return await FilePreview.getThumbnail(_imageFile!.path);
+    } else {
+      print('No image selected.');
+      return Text("");
+    }
+  }
+
+  Future<String> _uploadImage(String id) async {
+    try {
+      Reference storageReference = firestorage.ref().child('images/ratings/${id}/${DateTime.now().toString()}.png');
+      await storageReference.putFile(_imageFile!);
+      String downloadURL = await storageReference.getDownloadURL();
+      print('Image uploaded. Download URL: $downloadURL');
+      return downloadURL;
+
+    } catch (error) {
+      print('Error uploading image: $error');
+      return "";
+    }
   }
 
   Future<void> _getCafeterias(GetCafeteriasEvent event, Emitter emit) async {

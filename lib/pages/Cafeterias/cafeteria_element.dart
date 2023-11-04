@@ -15,54 +15,56 @@ class CafeteriaElement extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: (){
+      onWillPop: () {
         context.read<CafeteriasBloc>().add(GetCafeteriasEvent());
         return Future.value(true);
       },
       child: Scaffold(
-          appBar: AppBar(
-            title: Text(cafeteria.title!),
-          ),
-          body: Column(
-            children: [
-              Image.network(cafeteria.image!),
-              Expanded(
-                  child: Padding(
-                padding: EdgeInsets.all(8),
-                child: Container(
-                  alignment: Alignment.topLeft,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            children: [
-                              Text(cafeteria.schedule!),
-                              Text(cafeteria.description!),
-                            ],
-                          ),
+        appBar: AppBar(
+          title: Text(cafeteria.title!),
+        ),
+        body: Column(
+          children: [
+            Image.network(cafeteria.image!),
+            Expanded(
+                child: Padding(
+              padding: EdgeInsets.all(8),
+              child: Container(
+                alignment: Alignment.topLeft,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          children: [
+                            Text(cafeteria.schedule!),
+                            Text(cafeteria.description!),
+                          ],
                         ),
-                        CafeMap(lat: cafeteria.lat!, lng: cafeteria.lng!)
-                      ],
-                    ),
+                      ),
+                      CafeMap(lat: cafeteria.lat!, lng: cafeteria.lng!)
+                    ],
                   ),
                 ),
-              )),
-              Padding(
-                padding: EdgeInsets.only(bottom: 30),
-                child: ElevatedButton(
-                  onPressed: () {
-                    context.read<CafeteriasBloc>().setCafeteria(cafeteria);
-                    context.read<CafeteriasBloc>().add(ViewMenuEvent());
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => MenuPage(),));
-                  },
-                  child: Text("menu"),
-                ),
-              )
-            ],
-          ),
+              ),
+            )),
+            Padding(
+              padding: EdgeInsets.only(bottom: 30),
+              child: ElevatedButton(
+                onPressed: () {
+                  context.read<CafeteriasBloc>().setCafeteria(cafeteria);
+                  context.read<CafeteriasBloc>().add(ViewMenuEvent());
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => MenuPage(),
+                  ));
+                },
+                child: Text("menu"),
+              ),
+            )
+          ],
         ),
+      ),
     );
   }
 }

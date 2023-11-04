@@ -22,7 +22,8 @@ void main() async {
   runApp(MultiBlocProvider(
     providers: [
       BlocProvider(
-        create: (context) => CafeteriasBloc(camera:camera)..add(GetCafeteriasEvent()),
+        create: (context) =>
+            CafeteriasBloc(camera: camera)..add(GetCafeteriasEvent()),
       ),
       BlocProvider(create: (context) => AuthBloc()..add(AuthCheckEvent())),
     ],

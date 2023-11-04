@@ -11,8 +11,8 @@ class Food extends Equatable {
 
   factory Food.fromMap(Map<String, dynamic> data) => Food(
         title: data['title'] as String?,
-        price: data['price'] as double?,
-        rating: data['rating'] as double?,
+        price: (data['price']  as num?)?.toDouble(),
+        rating: (data['rating']  as num?)?.toDouble(),
       );
 
   Map<String, dynamic> toMap() => {
