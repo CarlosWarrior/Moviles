@@ -41,11 +41,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Future<void> _login(AuthLoginEvent event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
     try {
+      print(event);
       final userCredential = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(
-              email: event.email, password: event.password);
+          .signInWithEmailAndPassword(email: event.email, password: event.password);
+      print(userCredential);
       emit(AuthSuccess(user: userCredential.user!));
     } catch (e) {
+      print(e);
       emit(AuthError(message: e.toString()));
     }
   }

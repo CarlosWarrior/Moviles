@@ -10,19 +10,19 @@ import 'package:proyecto/pages/Cafeterias/cafeterias_list_page.dart';
 import 'package:proyecto/pages/Favoritos/favorites_page.dart';
 import 'package:proyecto/pages/home_page.dart';
 import 'package:proyecto/pages/MyProfile/my_profile_page.dart';
+import 'package:camera/camera.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  final cameras = await availableCameras();
+  final camera = cameras.first;
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-    name: 'main'
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   runApp(MultiBlocProvider(
     providers: [
       BlocProvider(
-        create: (context) => CafeteriasBloc()..add(GetCafeteriasEvent()),
+        create: (context) => CafeteriasBloc(camera:camera)..add(GetCafeteriasEvent()),
       ),
       BlocProvider(create: (context) => AuthBloc()..add(AuthCheckEvent())),
     ],

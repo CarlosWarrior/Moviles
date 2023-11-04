@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:proyecto/bloc/cafeterias_bloc.dart';
+import 'package:proyecto/components/camera.dart';
 import 'package:proyecto/models/cafeteria.dart';
 import 'package:proyecto/models/food.dart';
 
@@ -47,7 +48,7 @@ class Menu extends StatelessWidget {
           return AlertDialog(
             title: Row(
               children: [
-                Text("Calificar platillo ${food.title}"),
+                Text("Calificar platillo ${food.title}", style: TextStyle(fontSize: 10),),
               ],
             ),
             content: SingleChildScrollView(
@@ -63,6 +64,7 @@ class Menu extends StatelessWidget {
                             children: [
                               Text("Sabor"),
                               RatingBar.builder(
+                                itemSize: 20,
                                 initialRating: 0,
                                 minRating: 1,
                                 maxRating: 5,
@@ -83,6 +85,7 @@ class Menu extends StatelessWidget {
                             children: [
                               Text("Precio"),
                               RatingBar.builder(
+                                itemSize: 20,
                                 initialRating: 0,
                                 minRating: 1,
                                 maxRating: 5,
@@ -104,8 +107,8 @@ class Menu extends StatelessWidget {
                     ),
                   ),
                   TextField(
-                    minLines:
-                        6, // any number you need (It works as the rows for the textarea)
+                    style: TextStyle(fontSize: 15),
+                    minLines:3,
                     keyboardType: TextInputType.multiline,
                     maxLines: null,
                     decoration: InputDecoration(hintText: "¿Algún comentario?"),
@@ -113,7 +116,18 @@ class Menu extends StatelessWidget {
                   ),
                   Visibility(
                     visible: context.watch<CafeteriasBloc>().permissionsAccepted,
-                    child: Text("Open Camera"),
+                    child: Column(
+                      children: [
+                        ElevatedButton(
+                          child: Text("Seleccionar una foto"),
+                          onPressed: context.read<CafeteriasBloc>().pickImage,
+                        ),
+                        ElevatedButton(
+                          child: Text("Toma una foto"),
+                          onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => CameraApp(camera: context.read<CafeteriasBloc>().camera))),
+                        ),
+                      ],
+                    ),
                   )
                 ],
               ),

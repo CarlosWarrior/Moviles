@@ -4,17 +4,34 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:proyecto/models/cafeteria.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+import 'package:camera/camera.dart';
 
 part 'cafeterias_event.dart';
 part 'cafeterias_state.dart';
 
 class CafeteriasBloc extends Bloc<CafeteriasEvent, CafeteriasState> {
-  CafeteriasBloc() : super(CafeteriasInitial()) {
+  CafeteriasBloc({required this.camera}) : super(CafeteriasInitial()) {
     on<GetCafeteriasEvent>(_getCafeterias);
     on<SearchCafeteriasEvent>(_searchCafeterias);
     on<SelectCafeteriasEvent>(_selectCafeteria);
     on<ViewMenuEvent>(_viewMenu);
   }
+
+  final CameraDescription camera;
+  late File _image;
+  final picker = ImagePicker();
+  Future<void> pickImage() async {
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      _image = File(pickedFile.path);
+    } else {
+      print('No image selected.');
+    }
+  }
+
+
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   List<Cafeteria> _cafeterias = [];
   Cafeteria? _cafeteria = null;
@@ -61,27 +78,27 @@ class CafeteriasBloc extends Bloc<CafeteriasEvent, CafeteriasState> {
       await openAppSettings();
     }
 
-    PermissionStatus mediaLibraryPermission = await Permission.photos.status;
-    if (mediaLibraryPermission.isDenied) {
-      await Permission.mediaLibrary.request();
-      mediaLibraryPermission = await Permission.mediaLibrary.status;
-      if (mediaLibraryPermission.isDenied) {
-        await openAppSettings();
-      }
-    } else if (mediaLibraryPermission.isPermanentlyDenied) {
-      await openAppSettings();
-    }
+    // PermissionStatus mediaLibraryPermission = await Permission.photos.status;
+    // if (mediaLibraryPermission.isDenied) {
+    //   await Permission.mediaLibrary.request();
+    //   mediaLibraryPermission = await Permission.mediaLibrary.status;
+    //   if (mediaLibraryPermission.isDenied) {
+    //     await openAppSettings();
+    //   }
+    // } else if (mediaLibraryPermission.isPermanentlyDenied) {
+    //   await openAppSettings();
+    // }
 
-    PermissionStatus photosPermission = await Permission.photos.status;
-    if (photosPermission.isDenied) {
-      await Permission.photos.request();
-      photosPermission = await Permission.photos.status;
-      if (photosPermission.isDenied) {
-        await openAppSettings();
-      }
-    } else if (photosPermission.isPermanentlyDenied) {
-      await openAppSettings();
-    }
+    // PermissionStatus photosPermission = await Permission.photos.status;
+    // if (photosPermission.isDenied) {
+    //   await Permission.photos.request();
+    //   photosPermission = await Permission.photos.status;
+    //   if (photosPermission.isDenied) {
+    //     await openAppSettings();
+    //   }
+    // } else if (photosPermission.isPermanentlyDenied) {
+    //   await openAppSettings();
+    // }
 
     PermissionStatus storagePermission = await Permission.storage.status;
     if (storagePermission.isDenied) {
@@ -95,9 +112,7 @@ class CafeteriasBloc extends Bloc<CafeteriasEvent, CafeteriasState> {
     }
 
     this.permissionsAccepted = cameraPermission.isGranted &&
-        storagePermission.isGranted &&
-        (photosPermission.isGranted || photosPermission.isLimited) &&
-        mediaLibraryPermission.isGranted;
+        storagePermission.isGranted;
   }
 
   Future<void> _getCafeterias(GetCafeteriasEvent event, Emitter emit) async {
