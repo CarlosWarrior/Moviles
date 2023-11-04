@@ -1,19 +1,12 @@
-import 'dart:convert';
-
 import 'package:bloc/bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:proyecto/models/cafeteria.dart';
 
 part 'cafeterias_event.dart';
 part 'cafeterias_state.dart';
-
-String cafeteriasUrl =
-    "https://us-west1-appsmoviles-proyecto.cloudfunctions.net/cafeterias";
 
 class CafeteriasBloc extends Bloc<CafeteriasEvent, CafeteriasState> {
   CafeteriasBloc() : super(CafeteriasInitial()) {
@@ -22,7 +15,7 @@ class CafeteriasBloc extends Bloc<CafeteriasEvent, CafeteriasState> {
     on<SelectCafeteriasEvent>(_selectCafeteria);
     on<ViewMenuEvent>(_viewMenu);
   }
-
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
   List<Cafeteria> _cafeterias = [];
   Cafeteria? _cafeteria = null;
 
@@ -110,19 +103,21 @@ class CafeteriasBloc extends Bloc<CafeteriasEvent, CafeteriasState> {
   Future<void> _getCafeterias(GetCafeteriasEvent event, Emitter emit) async {
     emit(CafeteriasLoadingState());
     try {
-      var cafes =
-          await FirebaseDatabase.instance.ref().child("cafeterias").once();
-
-      if (cafes.snapshot.exists) {
-        _cafeterias = (cafes.snapshot.value as Map)
-            .values
-            .map((e) => Cafeteria.fromMap(e))
-            .toList();
-
-        emit(CafeteriasSuccessState(cafeteriasList: _cafeterias));
-      } else {
-        emit(CafeteriasSuccessState(cafeteriasList: []));
-      }
+      print("fetching");
+      CollectionReference<Map<String, dynamic>> cafesCollection = firestore.collection("cafeterias");
+      await cafesCollection
+        .get()
+        .then((QuerySnapshot<Map<String,dynamic>> cafesSnapshot) {
+          _cafeterias = cafesSnapshot.docs.map(
+            (QueryDocumentSnapshot<Map<String, dynamic>> cafeSnapshot){
+              Map<String, dynamic> cafeMap = cafeSnapshot.data();
+              cafeMap["id"] = cafeSnapshot.id;
+              return Cafeteria.fromMap(cafeMap);
+            }
+          ).toList();
+        })
+      ;
+      emit(CafeteriasSuccessState(cafeteriasList: _cafeterias));
     } catch (e) {
       debugPrint(e.toString());
       emit(CafeteriasErrorState());
