@@ -1,6 +1,8 @@
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:proyecto/models/cafeteria.dart';
@@ -83,15 +85,37 @@ class CafeteriasBloc extends Bloc<CafeteriasEvent, CafeteriasState> {
       await openAppSettings();
     }
 
-    PermissionStatus storagePermission = await Permission.storage.status;
-    if (storagePermission.isDenied) {
-      await Permission.storage.request();
+    PermissionStatus storagePermission;
+    // Don't ask for storage permission on Android 13
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      var androidVersion =
+          int.parse((await DeviceInfoPlugin().androidInfo).version.release);
+
+      if (androidVersion < 13) {
+        storagePermission = await Permission.storage.status;
+        if (storagePermission.isDenied) {
+          await Permission.storage.request();
+          storagePermission = await Permission.storage.status;
+          if (storagePermission.isDenied) {
+            await openAppSettings();
+          }
+        } else if (storagePermission.isPermanentlyDenied) {
+          await openAppSettings();
+        }
+      } else {
+        storagePermission = PermissionStatus.granted;
+      }
+    } else {
       storagePermission = await Permission.storage.status;
       if (storagePermission.isDenied) {
+        await Permission.storage.request();
+        storagePermission = await Permission.storage.status;
+        if (storagePermission.isDenied) {
+          await openAppSettings();
+        }
+      } else if (storagePermission.isPermanentlyDenied) {
         await openAppSettings();
       }
-    } else if (storagePermission.isPermanentlyDenied) {
-      await openAppSettings();
     }
 
     this.permissionsAccepted = cameraPermission.isGranted &&
@@ -104,19 +128,18 @@ class CafeteriasBloc extends Bloc<CafeteriasEvent, CafeteriasState> {
     emit(CafeteriasLoadingState());
     try {
       print("fetching");
-      CollectionReference<Map<String, dynamic>> cafesCollection = firestore.collection("cafeterias");
+      CollectionReference<Map<String, dynamic>> cafesCollection =
+          firestore.collection("cafeterias");
       await cafesCollection
-        .get()
-        .then((QuerySnapshot<Map<String,dynamic>> cafesSnapshot) {
-          _cafeterias = cafesSnapshot.docs.map(
-            (QueryDocumentSnapshot<Map<String, dynamic>> cafeSnapshot){
-              Map<String, dynamic> cafeMap = cafeSnapshot.data();
-              cafeMap["id"] = cafeSnapshot.id;
-              return Cafeteria.fromMap(cafeMap);
-            }
-          ).toList();
-        })
-      ;
+          .get()
+          .then((QuerySnapshot<Map<String, dynamic>> cafesSnapshot) {
+        _cafeterias = cafesSnapshot.docs
+            .map((QueryDocumentSnapshot<Map<String, dynamic>> cafeSnapshot) {
+          Map<String, dynamic> cafeMap = cafeSnapshot.data();
+          cafeMap["id"] = cafeSnapshot.id;
+          return Cafeteria.fromMap(cafeMap);
+        }).toList();
+      });
       emit(CafeteriasSuccessState(cafeteriasList: _cafeterias));
     } catch (e) {
       debugPrint(e.toString());

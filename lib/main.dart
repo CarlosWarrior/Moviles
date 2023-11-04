@@ -16,7 +16,6 @@ void main() async {
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
-    name: 'main'
   );
 
   runApp(MultiBlocProvider(
