@@ -21,6 +21,20 @@ final class CafeteriasSuccessState extends CafeteriasState {
   List<Object> get props => [cafeteriasList];
 }
 
+final class RatingsLoadingState extends CafeteriasState {}
+
+final class RatingsErrorState extends CafeteriasState {}
+
+final class RatingsSuccessState extends CafeteriasState {
+  final List<Rating> ratingList;
+  final String title;
+  RatingsSuccessState({required this.ratingList, required this.title});
+  @override
+  List<Object> get props => [ratingList];
+}
+
+
+
 final class SelectCafeteriaState extends CafeteriasState {
   final Cafeteria cafeteria;
   SelectCafeteriaState({required this.cafeteria});

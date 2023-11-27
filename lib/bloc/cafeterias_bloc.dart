@@ -19,6 +19,7 @@ part 'cafeterias_state.dart';
 class CafeteriasBloc extends Bloc<CafeteriasEvent, CafeteriasState> {
   CafeteriasBloc({required this.camera}) : super(CafeteriasInitial()) {
     on<GetCafeteriasEvent>(_getCafeterias);
+    on<GetRatingsEvent>(_getRatings);
     on<SearchCafeteriasEvent>(_searchCafeterias);
     on<SelectCafeteriasEvent>(_selectCafeteria);
     on<ViewMenuEvent>(_viewMenu);
@@ -31,6 +32,7 @@ class CafeteriasBloc extends Bloc<CafeteriasEvent, CafeteriasState> {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   
   List<Cafeteria> _cafeterias = [];
+  List<Rating> _ratings = [];
   Cafeteria? _cafeteria = null;
 
   void setCafeteria(Cafeteria value) => _cafeteria = value;
@@ -59,9 +61,9 @@ class CafeteriasBloc extends Bloc<CafeteriasEvent, CafeteriasState> {
     _foodPriceRating = 0.0;
     _imageFile = null;
   }
-  pushFoodRating()async{
+  pushFoodRating(food)async{
     print("${foodComment.text} , ${_foodTasteRating.toString()}, ${_foodPriceRating.toString()}");
-    Rating rating = new Rating(cafeteria: _cafeteria!.id, comment: foodComment.text, taste: _foodTasteRating, price: _foodPriceRating, image:"");
+    Rating rating = new Rating(cafeteria: _cafeteria!.id, comment: foodComment.text, taste: _foodTasteRating, price: _foodPriceRating, image:"", food: food);
     DocumentReference<Map<String, dynamic>> _rating = await firestore.collection("ratings").add(rating.toMap());
     if(_imageFile != null){
       String imageURL = await _uploadImage(_rating.id);
@@ -149,11 +151,9 @@ class CafeteriasBloc extends Bloc<CafeteriasEvent, CafeteriasState> {
 
   Future<void> takeImage(XFile xfile) async {
     _imageFile = File(xfile.path);
-    print(1);
     print(_imageFile);
   }
   Future<Widget> sendThumbnail()async{
-    print(2);
     print(_imageFile);
     if(_imageFile != null){
       return await FilePreview.getThumbnail(_imageFile!.path);
@@ -197,6 +197,29 @@ class CafeteriasBloc extends Bloc<CafeteriasEvent, CafeteriasState> {
     } catch (e) {
       debugPrint(e.toString());
       emit(CafeteriasErrorState());
+    }
+  }
+  
+  Future<void> _getRatings(GetRatingsEvent event, Emitter emit) async {
+    emit(RatingsLoadingState());
+    try {
+      print("fetching");
+      CollectionReference<Map<String, dynamic>> ratingsCollection =
+          firestore.collection("ratings");
+      await ratingsCollection
+          .get()
+          .then((QuerySnapshot<Map<String, dynamic>> ratingsSnapshot) {
+        _ratings = ratingsSnapshot.docs
+            .map((QueryDocumentSnapshot<Map<String, dynamic>> ratingsSnapshot) {
+          Map<String, dynamic> ratingMap = ratingsSnapshot.data();
+          ratingMap["id"] = ratingsSnapshot.id;
+          return Rating.fromMap(ratingMap);
+        }).toList();
+      });
+      emit(RatingsSuccessState(ratingList: _ratings, title: this._cafeteria?.title??"Ratings"));
+    } catch (e) {
+      debugPrint(e.toString());
+      emit(RatingsErrorState());
     }
   }
 

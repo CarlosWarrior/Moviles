@@ -8,6 +8,8 @@ sealed class CafeteriasEvent extends Equatable {
 
 class GetCafeteriasEvent extends CafeteriasEvent {}
 
+class GetRatingsEvent extends CafeteriasEvent {}
+
 class SearchCafeteriasEvent extends CafeteriasEvent {
   final String query;
 

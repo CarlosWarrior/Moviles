@@ -2,34 +2,40 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:proyecto/bloc/cafeterias_bloc.dart';
-class CameraApp extends StatefulWidget {
+class Camera extends StatefulWidget {
   final CameraDescription camera;
-  CameraApp({required this.camera, super.key});
+  Camera({required this.camera, super.key});
 
   @override
-  State<CameraApp> createState() => _CameraAppState();
+  State<Camera> createState() => _CameraState();
 }
 
-class _CameraAppState extends State<CameraApp> {
+class _CameraState extends State<Camera> {
   late CameraController controller;
 
   @override
   void initState() {
     super.initState();
-    controller = CameraController(widget.camera, ResolutionPreset.max);
+    controller = CameraController(widget.camera, ResolutionPreset.max, imageFormatGroup: ImageFormatGroup.jpeg);
     controller.initialize().then((_) {
       if (!mounted) {
+        print("Camera not mounted");
         return;
       }
+      print("Camera mounted");
       setState(() {});
     }).catchError((Object e) {
+      print("Camera error");
+      print(e);
       if (e is CameraException) {
         switch (e.code) {
           case 'CameraAccessDenied':
-            // Handle access errors here.
+            print("Camera access denied");
+            print(e);
             break;
           default:
-            // Handle other errors here.
+            print("Camera error");
+            print(e);
             break;
         }
       }
@@ -71,7 +77,9 @@ class _CameraAppState extends State<CameraApp> {
         ),
         body: Builder(builder: (context) {
           if (!controller.value.isInitialized) {
-            return Container();
+            return Container(
+              child: Text("Camera not initialized"),
+            );
           }
           return CameraPreview(controller);
         }),

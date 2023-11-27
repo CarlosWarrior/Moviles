@@ -3,8 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:proyecto/bloc/cafeterias_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:proyecto/models/food.dart';
-import 'package:proyecto/models/food.dart';
-import 'package:proyecto/models/rating.dart';
 import 'package:proyecto/components/camera.dart';
 
 class RatingForm extends StatefulWidget {
@@ -30,7 +28,7 @@ class _RatingFormState extends State<RatingForm> {
     }
 
     pushRating() {
-      context.read<CafeteriasBloc>().pushFoodRating();
+      context.read<CafeteriasBloc>().pushFoodRating(widget.food.title);
     }
 
     clearRating(){
@@ -142,7 +140,7 @@ class _RatingFormState extends State<RatingForm> {
                     ElevatedButton(
                       child: Text("Toma una foto"),
                       onPressed: () => Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => CameraApp(camera: context.read<CafeteriasBloc>().camera))
+                          MaterialPageRoute(builder: (context) => Camera(camera: context.read<CafeteriasBloc>().camera))
                       ).then((value) => requestThumbnail()),
                     ),
                   ],
