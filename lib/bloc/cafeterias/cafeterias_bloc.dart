@@ -71,6 +71,25 @@ class CafeteriasBloc extends Bloc<CafeteriasEvent, CafeteriasState> {
       await _rating.update({"image":imageURL});
     }
     clearRating();
+    await _updateCafeteriaRating();
+  }
+
+  _updateCafeteriaRating()async{
+     QuerySnapshot<Map<String, dynamic>>  ratings = await firestore.collection("ratings")
+      .where("cafeteria", isEqualTo: this._cafeteria!.id)
+      .get();
+      double rating = 0;
+      int count = 0;
+      ratings.docs.forEach((QueryDocumentSnapshot<Map<String, dynamic>> ratingSnapshot) {
+        Map<String, dynamic> ratingMap = ratingSnapshot.data();
+        rating += (ratingMap["price"] + ratingMap["taste"])/2;
+        count++;
+      });
+      Map<String, dynamic> cafeteriaMap = this._cafeteria!.toMap();
+      cafeteriaMap['rating'] = double.parse((rating/count).toStringAsFixed(2));
+      await firestore.collection("cafeterias")
+        .doc(this._cafeteria!.id)
+        .update(cafeteriaMap);
   }
 
   bool permissionsAccepted = false;

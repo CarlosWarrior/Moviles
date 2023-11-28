@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:proyecto/bloc/cafeterias/cafeterias_bloc.dart';
@@ -17,6 +18,7 @@ class CafeteriasList extends StatefulWidget {
 }
 
 class _CafeteriasListState extends State<CafeteriasList> {
+  String uid = FirebaseAuth.instance.currentUser!.uid;
   TextEditingController _query = TextEditingController();
   @override
   Widget build(BuildContext context) {
@@ -71,6 +73,7 @@ class _CafeteriasListState extends State<CafeteriasList> {
                     title: cafeteria.title!,
                     rating: cafeteria.rating!.toString(),
                     id: cafeteria.id!,
+                    favorite: cafeteria.favorites!.contains(uid),
                   );
                 },
               ),

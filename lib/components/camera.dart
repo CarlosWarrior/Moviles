@@ -49,6 +49,7 @@ class _CameraState extends State<Camera> {
   }
 
   Future<void> _captureAndUpload() async {
+    print("Capturing image");
     try {
       controller.takePicture()
         .then((XFile imageFile){

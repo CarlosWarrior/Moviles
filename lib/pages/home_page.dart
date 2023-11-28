@@ -50,7 +50,7 @@ class Sidenbar extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.black,
               image: DecorationImage(
-                image: NetworkImage("https://picsum.photos/300/200"),
+                image: NetworkImage("https://upload.wikimedia.org/wikipedia/commons/c/c5/Roasted_coffee_beans.jpg"),
                 fit: BoxFit.cover,
                 opacity: 0.5,
               ),
@@ -62,14 +62,6 @@ class Sidenbar extends StatelessWidget {
             onTap: () async {
               Navigator.pop(context);
               await Navigator.of(context).pushNamed('/');
-            },
-          ),
-          ListTile(
-            title: Text("Mis favoritos"),
-            leading: Icon(Icons.favorite),
-            onTap: () async {
-              Navigator.of(context).pop();
-              await Navigator.of(context).pushNamed('/favorites');
             },
           ),
           ListTile(

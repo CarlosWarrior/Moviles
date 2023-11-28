@@ -6,7 +6,6 @@ import 'package:proyecto/bloc/cafeterias/cafeterias_bloc.dart';
 import 'package:proyecto/firebase_options.dart';
 import 'package:proyecto/pages/Auth/login_page.dart';
 import 'package:proyecto/pages/Auth/register_page.dart';
-import 'package:proyecto/pages/Favoritos/favorites_page.dart';
 import 'package:proyecto/pages/home_page.dart';
 import 'package:proyecto/pages/MyProfile/my_profile_page.dart';
 import 'package:camera/camera.dart';
@@ -46,7 +45,6 @@ class MyApp extends StatelessWidget {
         '/': (context) => HomePage(),
         '/auth': (context) => LoginPage(),
         '/my_profile': (context) => MyProfilePage(),
-        '/favorites': (context) => FavoritePage(),
         '/register': (context) => RegisterPage(),
       },
     );

@@ -5,6 +5,7 @@ class CoffeCardComponent extends StatelessWidget {
   final Widget image;
   final String title;
   final String rating;
+  final bool favorite;
   final VoidCallback onTap;
   const CoffeCardComponent({
     super.key,
@@ -12,6 +13,7 @@ class CoffeCardComponent extends StatelessWidget {
     required this.title,
     required this.rating,
     required this.id,
+    required this.favorite,
     required this.onTap,
   });
 
@@ -51,6 +53,11 @@ class CoffeCardComponent extends StatelessWidget {
                     ),
                   ),
                 ),
+              ),
+              Positioned(
+                top: 0,
+                right: 0,
+                child: favorite?Icon(Icons.favorite):Text("")
               ),
               Positioned(
                 bottom: 0,
