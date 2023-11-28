@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:proyecto/bloc/cafeterias_bloc.dart';
+import 'package:proyecto/bloc/cafeterias/cafeterias_bloc.dart';
 import 'package:proyecto/models/cafeteria.dart';
 import 'package:proyecto/pages/Cafeterias/rating_form.dart';
 import 'package:proyecto/pages/Cafeterias/ratings_page.dart';
@@ -39,11 +39,6 @@ class Menu extends StatelessWidget {
                     onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => RatingForm(food: cafeteria.foods![index],))),
                     //estrellas de favorito
                     child: ListTile(
-                      leading: IconButton(
-                        icon: Icon(Icons.favorite_border),
-                        color: Colors.red,
-                        onPressed: addToFavorite,
-                      ),
                       title: Text(cafeteria.foods![index].title!),
                       trailing:
                           Text("\$ ${cafeteria.foods![index].price!.toString()}"),
@@ -57,7 +52,7 @@ class Menu extends StatelessWidget {
                 context
                   .read<CafeteriasBloc>()
                   .add(GetRatingsEvent());
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => RatingsPage(),));
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => RatingsPage(cafeteria: cafeteria,),));
               }, 
               child: Text("See ratings")
             )

@@ -13,6 +13,7 @@ class Cafeteria extends Equatable {
   final String? schedule;
   final double? lat;
   final double? lng;
+  final List<String>? favorites;
   final List<Food>? foods;
 
   const Cafeteria({
@@ -24,6 +25,7 @@ class Cafeteria extends Equatable {
     this.schedule,
     this.lat,
     this.lng,
+    this.favorites,
     this.foods,
   });
 
@@ -36,6 +38,9 @@ class Cafeteria extends Equatable {
         schedule: data['schedule'] as String?,
         lat: (data['lat'] as num?)?.toDouble(),
         lng: (data['lng'] as num?)?.toDouble(),
+        favorites: (data['favorites'] as List<dynamic>?)
+            ?.map((e) => e.toString())
+            .toList(),
         foods: (data['foods'] as List<dynamic>?)
             ?.map((e) => Food.fromMap(e as Map<String, dynamic>))
             .toList(),
@@ -50,6 +55,7 @@ class Cafeteria extends Equatable {
         'schedule': schedule,
         'lat': lat,
         'lng': lng,
+        'favorites': favorites?.map((e) => e.toString()).toList(),
         'foods': foods?.map((e) => e.toMap()).toList(),
       };
 
@@ -74,6 +80,7 @@ class Cafeteria extends Equatable {
     String? schedule,
     double? lat,
     double? lng,
+    List<String>? favorites,
     List<Food>? foods,
   }) {
     return Cafeteria(
@@ -85,6 +92,7 @@ class Cafeteria extends Equatable {
       schedule: schedule ?? this.schedule,
       lat: lat ?? this.lat,
       lng: lng ?? this.lng,
+      favorites: favorites ?? this.favorites,
       foods: foods ?? this.foods,
     );
   }
@@ -100,6 +108,7 @@ class Cafeteria extends Equatable {
       schedule,
       lat,
       lng,
+      favorites,
       foods,
     ];
   }

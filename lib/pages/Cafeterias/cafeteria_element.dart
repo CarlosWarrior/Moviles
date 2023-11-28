@@ -1,12 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:proyecto/bloc/cafeterias_bloc.dart';
+import 'package:proyecto/bloc/cafeterias/cafeterias_bloc.dart';
 import 'package:proyecto/components/map.dart';
 import 'package:proyecto/models/cafeteria.dart';
-import 'package:proyecto/pages/Cafeterias/comments/comment.dart';
 import 'package:proyecto/pages/Cafeterias/menu_page.dart';
 
-class CafeteriaElement extends StatelessWidget {
+class CafeteriaElement extends StatefulWidget {
   final Cafeteria cafeteria;
   const CafeteriaElement({
     required this.cafeteria,
@@ -14,7 +14,14 @@ class CafeteriaElement extends StatelessWidget {
   });
 
   @override
+  State<CafeteriaElement> createState() => _CafeteriaElementState();
+}
+
+class _CafeteriaElementState extends State<CafeteriaElement> {
+  @override
   Widget build(BuildContext context) {
+    String uid = FirebaseAuth.instance.currentUser!.uid;
+    bool isFavorite = widget.cafeteria.favorites != null && widget.cafeteria.favorites!.contains(uid);
     return WillPopScope(
       onWillPop: () {
         context.read<CafeteriasBloc>().add(GetCafeteriasEvent());
@@ -22,7 +29,7 @@ class CafeteriaElement extends StatelessWidget {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text(cafeteria.title!),
+          title: Text(widget.cafeteria.title!),
         ),
         body: Column(
           children: [
@@ -44,7 +51,7 @@ class CafeteriaElement extends StatelessWidget {
                               children: [
                                 Positioned.fill(
                                   child: Image.network(
-                                    cafeteria.image!,
+                                    widget.cafeteria.image!,
                                     fit: BoxFit.cover,
                                   ),
                                 ),
@@ -67,9 +74,14 @@ class CafeteriaElement extends StatelessWidget {
                                   bottom: 0,
                                   right: 0,
                                   child: IconButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      context.read<CafeteriasBloc>().favorite(uid);
+                                      setState(() {
+                                        isFavorite = !isFavorite;
+                                      });
+                                    },
                                     color: Colors.red,
-                                    icon: Icon(Icons.favorite),
+                                    icon: Icon(isFavorite?Icons.favorite:Icons.favorite_border),
                                   ),
                                 )
                               ],
@@ -95,7 +107,7 @@ class CafeteriaElement extends StatelessWidget {
                                           .titleLarge,
                                     ),
                                     Text(
-                                      cafeteria.schedule!,
+                                      widget.cafeteria.schedule!,
                                       style: Theme.of(context)
                                           .textTheme
                                           .titleLarge!
@@ -109,7 +121,7 @@ class CafeteriaElement extends StatelessWidget {
                                         onPressed: () {
                                           context
                                               .read<CafeteriasBloc>()
-                                              .setCafeteria(cafeteria);
+                                              .setCafeteria(widget.cafeteria);
                                           context
                                               .read<CafeteriasBloc>()
                                               .add(ViewMenuEvent());
@@ -135,7 +147,7 @@ class CafeteriaElement extends StatelessWidget {
                                   ],
                                 ),
                                 Text(
-                                  cafeteria.description!,
+                                  widget.cafeteria.description!,
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyLarge!
@@ -144,7 +156,7 @@ class CafeteriaElement extends StatelessWidget {
                               ],
                             ),
                           ),
-                          CafeMap(lat: cafeteria.lat!, lng: cafeteria.lng!),
+                          CafeMap(lat: widget.cafeteria.lat!, lng: widget.cafeteria.lng!),
                         ],
                       ),
                     ),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:proyecto/bloc/auth/auth_bloc.dart';
-import 'package:proyecto/pages/Auth/register_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});

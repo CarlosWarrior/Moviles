@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:proyecto/bloc/cafeterias_bloc.dart';
+import 'package:proyecto/bloc/cafeterias/cafeterias_bloc.dart';
 import 'package:proyecto/components/loading.dart';
 import 'package:proyecto/pages/Cafeterias/menu.dart';
 

@@ -2,11 +2,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:proyecto/bloc/auth/auth_bloc.dart';
-import 'package:proyecto/bloc/cafeterias_bloc.dart';
+import 'package:proyecto/bloc/cafeterias/cafeterias_bloc.dart';
 import 'package:proyecto/firebase_options.dart';
 import 'package:proyecto/pages/Auth/login_page.dart';
 import 'package:proyecto/pages/Auth/register_page.dart';
-import 'package:proyecto/pages/Cafeterias/cafeterias_list_page.dart';
 import 'package:proyecto/pages/Favoritos/favorites_page.dart';
 import 'package:proyecto/pages/home_page.dart';
 import 'package:proyecto/pages/MyProfile/my_profile_page.dart';
@@ -46,7 +45,6 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => HomePage(),
         '/auth': (context) => LoginPage(),
-        '/cafeterias': (context) => CafeteriasPage(),
         '/my_profile': (context) => MyProfilePage(),
         '/favorites': (context) => FavoritePage(),
         '/register': (context) => RegisterPage(),

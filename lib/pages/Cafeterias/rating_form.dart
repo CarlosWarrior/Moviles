@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:proyecto/bloc/cafeterias_bloc.dart';
+import 'package:proyecto/bloc/cafeterias/cafeterias_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:proyecto/models/food.dart';
 import 'package:proyecto/components/camera.dart';

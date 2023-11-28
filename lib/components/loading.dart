@@ -7,7 +7,7 @@ class Loading extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        child: Center(child: CircularProgressIndicator()),
+        child: Center(child: Text("loading...")),
       ),
     );
   }

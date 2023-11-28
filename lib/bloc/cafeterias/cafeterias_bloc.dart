@@ -37,14 +37,13 @@ class CafeteriasBloc extends Bloc<CafeteriasEvent, CafeteriasState> {
 
   void setCafeteria(Cafeteria value) => _cafeteria = value;
 
-  bool _contains(Cafeteria cafe) {
+  bool _contains(Cafeteria cafe, String query) {
     return cafe.title
         .toString()
         .toLowerCase()
-        .contains(_query.text.toLowerCase());
+        .contains(query);
   }
 
-  TextEditingController _query = TextEditingController();
 
   double _foodTasteRating = 0.0;
   double _foodPriceRating = 0.0;
@@ -56,11 +55,13 @@ class CafeteriasBloc extends Bloc<CafeteriasEvent, CafeteriasState> {
   ratePrice(double rating) {
     _foodPriceRating = rating;
   }
+
   clearRating(){
     _foodTasteRating = 0.0;
     _foodPriceRating = 0.0;
     _imageFile = null;
   }
+
   pushFoodRating(food)async{
     print("${foodComment.text} , ${_foodTasteRating.toString()}, ${_foodPriceRating.toString()}");
     Rating rating = new Rating(cafeteria: _cafeteria!.id, comment: foodComment.text, taste: _foodTasteRating, price: _foodPriceRating, image:"", food: food);
@@ -88,8 +89,7 @@ class CafeteriasBloc extends Bloc<CafeteriasEvent, CafeteriasState> {
     PermissionStatus storagePermission;
     // Don't ask for storage permission on Android 13
     if (defaultTargetPlatform == TargetPlatform.android) {
-      var androidVersion =
-          int.parse((await DeviceInfoPlugin().androidInfo).version.release);
+      var androidVersion = int.parse((await DeviceInfoPlugin().androidInfo).version.release);
 
       if (androidVersion < 13) {
         storagePermission = await Permission.storage.status;
@@ -153,6 +153,7 @@ class CafeteriasBloc extends Bloc<CafeteriasEvent, CafeteriasState> {
     _imageFile = File(xfile.path);
     print(_imageFile);
   }
+  
   Future<Widget> sendThumbnail()async{
     print(_imageFile);
     if(_imageFile != null){
@@ -181,17 +182,14 @@ class CafeteriasBloc extends Bloc<CafeteriasEvent, CafeteriasState> {
     emit(CafeteriasLoadingState());
     try {
       print("fetching");
-      CollectionReference<Map<String, dynamic>> cafesCollection =
-          firestore.collection("cafeterias");
-      await cafesCollection
+      await firestore.collection("cafeterias")
           .get()
           .then((QuerySnapshot<Map<String, dynamic>> cafesSnapshot) {
-        _cafeterias = cafesSnapshot.docs
-            .map((QueryDocumentSnapshot<Map<String, dynamic>> cafeSnapshot) {
-          Map<String, dynamic> cafeMap = cafeSnapshot.data();
-          cafeMap["id"] = cafeSnapshot.id;
-          return Cafeteria.fromMap(cafeMap);
-        }).toList();
+            _cafeterias = cafesSnapshot.docs.map((QueryDocumentSnapshot<Map<String, dynamic>> cafeSnapshot) {
+              Map<String, dynamic> cafeMap = cafeSnapshot.data();
+              cafeMap["id"] = cafeSnapshot.id;
+              return Cafeteria.fromMap(cafeMap);
+            }).toList();
       });
       emit(CafeteriasSuccessState(cafeteriasList: _cafeterias));
     } catch (e) {
@@ -204,17 +202,14 @@ class CafeteriasBloc extends Bloc<CafeteriasEvent, CafeteriasState> {
     emit(RatingsLoadingState());
     try {
       print("fetching");
-      CollectionReference<Map<String, dynamic>> ratingsCollection =
-          firestore.collection("ratings");
-      await ratingsCollection
+      await firestore.collection("ratings")
           .get()
           .then((QuerySnapshot<Map<String, dynamic>> ratingsSnapshot) {
-        _ratings = ratingsSnapshot.docs
-            .map((QueryDocumentSnapshot<Map<String, dynamic>> ratingsSnapshot) {
-          Map<String, dynamic> ratingMap = ratingsSnapshot.data();
-          ratingMap["id"] = ratingsSnapshot.id;
-          return Rating.fromMap(ratingMap);
-        }).toList();
+            _ratings = ratingsSnapshot.docs.map((QueryDocumentSnapshot<Map<String, dynamic>> ratingsSnapshot) {
+              Map<String, dynamic> ratingMap = ratingsSnapshot.data();
+              ratingMap["id"] = ratingsSnapshot.id;
+              return Rating.fromMap(ratingMap);
+          }).toList();
       });
       emit(RatingsSuccessState(ratingList: _ratings, title: this._cafeteria?.title??"Ratings"));
     } catch (e) {
@@ -228,7 +223,7 @@ class CafeteriasBloc extends Bloc<CafeteriasEvent, CafeteriasState> {
       if (event.query.isEmpty) {
         emit(CafeteriasSuccessState(cafeteriasList: _cafeterias));
       } else {
-        var filtered = _cafeterias.where((element) => _contains(element));
+        var filtered = _cafeterias.where((element) => _contains(element, event.query.toLowerCase()));
         emit(CafeteriasSuccessState(cafeteriasList: filtered.toList()));
       }
     } catch (e) {
@@ -243,4 +238,19 @@ class CafeteriasBloc extends Bloc<CafeteriasEvent, CafeteriasState> {
   void _viewMenu(ViewMenuEvent event, Emitter emit) {
     emit(ViewMenuState(cafeteria: _cafeteria!));
   }
+
+  void favorite(String uid)async{
+    if(this._cafeteria != null && this._cafeteria!.favorites != null){
+      if(this._cafeteria!.favorites!.contains(uid)){
+        this._cafeteria!.favorites!.remove(uid);
+      }
+      else{
+        this._cafeteria!.favorites!.add(uid);
+      }
+    }
+    await firestore.collection("cafeterias")
+          .doc(this._cafeteria!.id)
+          .update(this._cafeteria!.toMap());
+  }
+
 }
