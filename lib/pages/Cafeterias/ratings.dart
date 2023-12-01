@@ -31,18 +31,19 @@ class Ratings extends StatelessWidget {
                   return Card(
                     child: Column(
                       children: [
+                        Text(ratings[index].food!,
+                            textAlign: TextAlign.left,
+                            overflow: TextOverflow.visible,
+                            style: Theme.of(context)
+                                .textTheme
+                                .headlineSmall!
+                                .copyWith(fontWeight: FontWeight.bold)),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             // Add starts
                             Column(
                               children: [
-                                Text(ratings[index].food!,
-                                    textAlign: TextAlign.left,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .headlineLarge!
-                                        .copyWith(fontWeight: FontWeight.bold)),
                                 Row(
                                   children: [
                                     Text("Precio ",
