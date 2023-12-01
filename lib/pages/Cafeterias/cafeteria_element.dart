@@ -5,6 +5,7 @@ import 'package:proyecto/bloc/cafeterias/cafeterias_bloc.dart';
 import 'package:proyecto/components/map.dart';
 import 'package:proyecto/models/cafeteria.dart';
 import 'package:proyecto/pages/Cafeterias/menu_page.dart';
+import 'package:share_plus/share_plus.dart';
 
 class CafeteriaElement extends StatefulWidget {
   final Cafeteria cafeteria;
@@ -21,7 +22,8 @@ class _CafeteriaElementState extends State<CafeteriaElement> {
   @override
   Widget build(BuildContext context) {
     String uid = FirebaseAuth.instance.currentUser!.uid;
-    bool isFavorite = widget.cafeteria.favorites != null && widget.cafeteria.favorites!.contains(uid);
+    bool isFavorite = widget.cafeteria.favorites != null &&
+        widget.cafeteria.favorites!.contains(uid);
     return WillPopScope(
       onWillPop: () {
         context.read<CafeteriasBloc>().add(GetCafeteriasEvent());
@@ -71,19 +73,38 @@ class _CafeteriaElementState extends State<CafeteriaElement> {
                                   ),
                                 ),
                                 Positioned(
-                                  bottom: 0,
+                                  top: 0,
                                   right: 0,
                                   child: IconButton(
                                     onPressed: () {
-                                      context.read<CafeteriasBloc>().favorite(uid);
+                                      context
+                                          .read<CafeteriasBloc>()
+                                          .favorite(uid);
                                       setState(() {
                                         isFavorite = !isFavorite;
                                       });
                                     },
                                     color: Colors.red,
-                                    icon: Icon(isFavorite?Icons.favorite:Icons.favorite_border),
+                                    icon: Icon(isFavorite
+                                        ? Icons.favorite
+                                        : Icons.favorite_border),
                                   ),
-                                )
+                                ),
+                                Positioned(
+                                    bottom: 0,
+                                    right: 0,
+                                    child: IconButton(
+                                      icon: Icon(Icons.share),
+                                      onPressed: () async {
+                                        // share using share_plus
+                                        var mapsLink =
+                                            "https://www.google.com/maps/@${widget.cafeteria.lat},${widget.cafeteria.lng},16.62z?entry=ttu";
+
+                                        await Share.share(
+                                            "Te invito a visitar ${widget.cafeteria.title} en $mapsLink",
+                                            subject: "Te invito a visitar");
+                                      },
+                                    ))
                               ],
                             ),
                           ),
@@ -156,7 +177,9 @@ class _CafeteriaElementState extends State<CafeteriaElement> {
                               ],
                             ),
                           ),
-                          CafeMap(lat: widget.cafeteria.lat!, lng: widget.cafeteria.lng!),
+                          CafeMap(
+                              lat: widget.cafeteria.lat!,
+                              lng: widget.cafeteria.lng!),
                         ],
                       ),
                     ),
