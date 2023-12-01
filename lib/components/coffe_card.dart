@@ -55,10 +55,11 @@ class CoffeCardComponent extends StatelessWidget {
                 ),
               ),
               Positioned(
-                top: 0,
-                right: 0,
-                child: favorite?Icon(Icons.favorite):Text("")
-              ),
+                  top: 0,
+                  right: 0,
+                  child: favorite
+                      ? Icon(Icons.favorite, color: Colors.red)
+                      : Text("")),
               Positioned(
                 bottom: 0,
                 right: 0,

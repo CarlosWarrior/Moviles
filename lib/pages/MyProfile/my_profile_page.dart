@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:proyecto/bloc/auth/auth_bloc.dart';
 import 'package:proyecto/bloc/cafeterias/cafeterias_bloc.dart';
+import 'package:proyecto/bloc/profile_picture/profile_picture_bloc.dart';
 import 'package:proyecto/models/cafeteria.dart';
 import 'package:proyecto/pages/Auth/login_page.dart';
 import 'package:proyecto/pages/Cafeterias/cafeteria_element_page.dart';
@@ -58,11 +59,30 @@ class MyProfilePage extends StatelessWidget {
             ),
             Stack(
               children: [
-                CircleAvatar(
-                  radius: 96,
-                  backgroundImage:
-                      NetworkImage(state.user.photoURL ?? imagePlaceholder),
-                ),
+                BlocBuilder<ProfilePictureBloc, ProfilePictureState>(
+                    builder: (context, profileState) {
+                  if (profileState is ProfilePictureLoaded ||
+                      profileState is ProfilePictureInitial) {
+                    print(state.user.photoURL);
+                    if (state.user.photoURL != null) {
+                      return CircleAvatar(
+                        radius: 96,
+                        backgroundImage: NetworkImage(state.user.photoURL!),
+                      );
+                    }
+                    return CircleAvatar(
+                      radius: 96,
+                      backgroundColor: Colors.grey[300],
+                    );
+                  } else {
+                    // Circle with a loading indicator
+                    return CircleAvatar(
+                      radius: 96,
+                      backgroundColor: Colors.grey[300],
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                }),
                 Positioned(
                   bottom: 0,
                   right: 0,
@@ -76,7 +96,12 @@ class MyProfilePage extends StatelessWidget {
                         Icons.edit,
                         color: Colors.white,
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        BlocProvider.of<ProfilePictureBloc>(context)
+                            .add(UpdateProfilePictureEvent());
+                        BlocProvider.of<AuthBloc>(context)
+                            .add(AuthCheckEvent());
+                      },
                     ),
                   ),
                 )
