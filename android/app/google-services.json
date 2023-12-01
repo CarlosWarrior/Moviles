@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "700055583206",
+    "project_id": "cafeterias-iteso",
+    "storage_bucket": "cafeterias-iteso.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:700055583206:android:e1a81a7e399d250c8d3e27",
+        "android_client_info": {
+          "package_name": "com.example.proyecto"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBKF_f9jxPebwJPieREBlDNJXDHBzdMh1M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

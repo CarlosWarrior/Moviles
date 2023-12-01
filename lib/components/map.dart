@@ -36,7 +36,10 @@ class CafeMap extends StatelessWidget {
                 point: LatLng(lat, lng),
                 width: 80,
                 height: 80,
-                builder: (context) => Icon(Icons.place, color: Colors.deepOrange,),
+                builder: (context) => Icon(
+                  Icons.place,
+                  color: Colors.deepOrange,
+                ),
               ),
             ],
           ),

@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:proyecto/pages/cafe.dart';
-import 'package:proyecto/main_provider.dart';
 
 class CoffeCardComponent extends StatelessWidget {
   final String id;
   final Widget image;
   final String title;
   final String rating;
-  const CoffeCardComponent(
-      {super.key,
-      required this.image,
-      required this.title,
-      required this.rating,
-      required this.id});
+  final bool favorite;
+  final VoidCallback onTap;
+  const CoffeCardComponent({
+    super.key,
+    required this.image,
+    required this.title,
+    required this.rating,
+    required this.id,
+    required this.favorite,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -22,13 +24,7 @@ class CoffeCardComponent extends StatelessWidget {
       child: InkWell(
         splashColor: Colors.deepOrangeAccent[100],
         borderRadius: BorderRadius.circular(8),
-        onTap: () {
-          var cafe = context.read<MainProvider>().cafes.firstWhere(
-              (el) => context.read<MainProvider>().findCafeById(el, id));
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => Cafe(cafe: cafe)),
-          );
-        },
+        onTap: this.onTap,
         child: ClipRRect(
           child: Stack(
             children: [
@@ -58,6 +54,12 @@ class CoffeCardComponent extends StatelessWidget {
                   ),
                 ),
               ),
+              Positioned(
+                  top: 0,
+                  right: 0,
+                  child: favorite
+                      ? Icon(Icons.favorite, color: Colors.red)
+                      : Text("")),
               Positioned(
                 bottom: 0,
                 right: 0,
