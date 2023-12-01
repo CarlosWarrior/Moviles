@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:proyecto/bloc/auth/auth_bloc.dart';
 import 'package:proyecto/bloc/cafeterias/cafeterias_bloc.dart';
+import 'package:proyecto/bloc/profile_picture/profile_picture_bloc.dart';
 import 'package:proyecto/firebase_options.dart';
 import 'package:proyecto/pages/Auth/login_page.dart';
 import 'package:proyecto/pages/Auth/register_page.dart';
@@ -24,6 +25,9 @@ void main() async {
             CafeteriasBloc(camera: camera)..add(GetCafeteriasEvent()),
       ),
       BlocProvider(create: (context) => AuthBloc()..add(AuthCheckEvent())),
+      BlocProvider(
+        create: (context) => ProfilePictureBloc(),
+      )
     ],
     child: MyApp(),
   ));
