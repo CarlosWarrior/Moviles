@@ -168,6 +168,13 @@ class CafeteriasBloc extends Bloc<CafeteriasEvent, CafeteriasState> {
     return await sendThumbnail();
   }
 
+  Future<void> takePickImage()async{
+    XFile? image = await picker.pickImage(source: ImageSource.camera);
+    if(image != null){
+      _imageFile = File(image.path);
+    }
+  }
+
   Future<void> takeImage(XFile xfile) async {
     _imageFile = File(xfile.path);
     print(_imageFile);
