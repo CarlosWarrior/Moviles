@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:proyecto/bloc/cafeterias/cafeterias_bloc.dart';
+import 'package:proyecto/bloc/image_picker_camera.dart';
 class Camera extends StatefulWidget {
   final CameraDescription camera;
   Camera({required this.camera, super.key});
@@ -79,7 +80,7 @@ class _CameraState extends State<Camera> {
         body: Builder(builder: (context) {
           if (!controller.value.isInitialized) {
             return Container(
-              child: Text("Camera not initialized"),
+              child: ImagePickerCamera(),
             );
           }
           return CameraPreview(controller);
