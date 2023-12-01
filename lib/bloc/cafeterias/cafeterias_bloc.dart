@@ -30,7 +30,7 @@ class CafeteriasBloc extends Bloc<CafeteriasEvent, CafeteriasState> {
   final picker = ImagePicker();
   FirebaseStorage firestorage = FirebaseStorage.instance;
   FirebaseFirestore firestore = FirebaseFirestore.instance;
-  
+
   List<Cafeteria> _cafeterias = [];
   List<Rating> _ratings = [];
   Cafeteria? _cafeteria = null;
@@ -38,12 +38,8 @@ class CafeteriasBloc extends Bloc<CafeteriasEvent, CafeteriasState> {
   void setCafeteria(Cafeteria value) => _cafeteria = value;
 
   bool _contains(Cafeteria cafe, String query) {
-    return cafe.title
-        .toString()
-        .toLowerCase()
-        .contains(query);
+    return cafe.title.toString().toLowerCase().contains(query);
   }
-
 
   double _foodTasteRating = 0.0;
   double _foodPriceRating = 0.0;
@@ -56,38 +52,49 @@ class CafeteriasBloc extends Bloc<CafeteriasEvent, CafeteriasState> {
     _foodPriceRating = rating;
   }
 
-  clearRating(){
+  clearRating() {
     _foodTasteRating = 0.0;
     _foodPriceRating = 0.0;
     _imageFile = null;
   }
 
-  pushFoodRating(food)async{
-    print("${foodComment.text} , ${_foodTasteRating.toString()}, ${_foodPriceRating.toString()}");
-    Rating rating = new Rating(cafeteria: _cafeteria!.id, comment: foodComment.text, taste: _foodTasteRating, price: _foodPriceRating, image:"", food: food);
-    DocumentReference<Map<String, dynamic>> _rating = await firestore.collection("ratings").add(rating.toMap());
-    if(_imageFile != null){
+  pushFoodRating(food) async {
+    print(
+        "${foodComment.text} , ${_foodTasteRating.toString()}, ${_foodPriceRating.toString()}");
+    Rating rating = new Rating(
+        cafeteria: _cafeteria!.id,
+        comment: foodComment.text,
+        taste: _foodTasteRating,
+        price: _foodPriceRating,
+        image: "",
+        food: food);
+    DocumentReference<Map<String, dynamic>> _rating =
+        await firestore.collection("ratings").add(rating.toMap());
+    if (_imageFile != null) {
       String imageURL = await _uploadImage(_rating.id);
-      await _rating.update({"image":imageURL});
+      await _rating.update({"image": imageURL});
     }
     clearRating();
     await _updateCafeteriaRating();
   }
 
-  _updateCafeteriaRating()async{
-     QuerySnapshot<Map<String, dynamic>>  ratings = await firestore.collection("ratings")
-      .where("cafeteria", isEqualTo: this._cafeteria!.id)
-      .get();
-      double rating = 0;
-      int count = 0;
-      ratings.docs.forEach((QueryDocumentSnapshot<Map<String, dynamic>> ratingSnapshot) {
-        Map<String, dynamic> ratingMap = ratingSnapshot.data();
-        rating += (ratingMap["price"] + ratingMap["taste"])/2;
-        count++;
-      });
-      Map<String, dynamic> cafeteriaMap = this._cafeteria!.toMap();
-      cafeteriaMap['rating'] = double.parse((rating/count).toStringAsFixed(2));
-      await firestore.collection("cafeterias")
+  _updateCafeteriaRating() async {
+    QuerySnapshot<Map<String, dynamic>> ratings = await firestore
+        .collection("ratings")
+        .where("cafeteria", isEqualTo: this._cafeteria!.id)
+        .get();
+    double rating = 0;
+    int count = 0;
+    ratings.docs
+        .forEach((QueryDocumentSnapshot<Map<String, dynamic>> ratingSnapshot) {
+      Map<String, dynamic> ratingMap = ratingSnapshot.data();
+      rating += (ratingMap["price"] + ratingMap["taste"]) / 2;
+      count++;
+    });
+    Map<String, dynamic> cafeteriaMap = this._cafeteria!.toMap();
+    cafeteriaMap['rating'] = double.parse((rating / count).toStringAsFixed(2));
+    await firestore
+        .collection("cafeterias")
         .doc(this._cafeteria!.id)
         .update(cafeteriaMap);
   }
@@ -108,7 +115,8 @@ class CafeteriasBloc extends Bloc<CafeteriasEvent, CafeteriasState> {
     PermissionStatus storagePermission;
     // Don't ask for storage permission on Android 13
     if (defaultTargetPlatform == TargetPlatform.android) {
-      var androidVersion = int.parse((await DeviceInfoPlugin().androidInfo).version.release);
+      var androidVersion =
+          int.parse((await DeviceInfoPlugin().androidInfo).version.release);
 
       if (androidVersion < 13) {
         storagePermission = await Permission.storage.status;
@@ -124,7 +132,8 @@ class CafeteriasBloc extends Bloc<CafeteriasEvent, CafeteriasState> {
       } else {
         storagePermission = PermissionStatus.granted;
       }
-      this.permissionsAccepted = cameraPermission.isGranted && storagePermission.isGranted;
+      this.permissionsAccepted =
+          cameraPermission.isGranted && storagePermission.isGranted;
     } else {
       storagePermission = await Permission.storage.status;
       if (storagePermission.isDenied) {
@@ -156,7 +165,10 @@ class CafeteriasBloc extends Bloc<CafeteriasEvent, CafeteriasState> {
       } else if (photosPermission.isPermanentlyDenied) {
         await openAppSettings();
       }
-      this.permissionsAccepted = cameraPermission.isGranted && storagePermission.isGranted && mediaLibraryPermission.isGranted && photosPermission.isGranted;
+      this.permissionsAccepted = cameraPermission.isGranted &&
+          storagePermission.isGranted &&
+          mediaLibraryPermission.isGranted &&
+          photosPermission.isGranted;
     }
   }
 
@@ -172,10 +184,10 @@ class CafeteriasBloc extends Bloc<CafeteriasEvent, CafeteriasState> {
     _imageFile = File(xfile.path);
     print(_imageFile);
   }
-  
-  Future<Widget> sendThumbnail()async{
+
+  Future<Widget> sendThumbnail() async {
     print(_imageFile);
-    if(_imageFile != null){
+    if (_imageFile != null) {
       return await FilePreview.getThumbnail(_imageFile!.path);
     } else {
       print('No image selected.');
@@ -185,12 +197,13 @@ class CafeteriasBloc extends Bloc<CafeteriasEvent, CafeteriasState> {
 
   Future<String> _uploadImage(String id) async {
     try {
-      Reference storageReference = firestorage.ref().child('images/ratings/${id}/${DateTime.now().toString()}.png');
+      Reference storageReference = firestorage
+          .ref()
+          .child('images/ratings/${id}/${DateTime.now().toString()}.png');
       await storageReference.putFile(_imageFile!);
       String downloadURL = await storageReference.getDownloadURL();
       print('Image uploaded. Download URL: $downloadURL');
       return downloadURL;
-
     } catch (error) {
       print('Error uploading image: $error');
       return "";
@@ -201,14 +214,16 @@ class CafeteriasBloc extends Bloc<CafeteriasEvent, CafeteriasState> {
     emit(CafeteriasLoadingState());
     try {
       print("fetching");
-      await firestore.collection("cafeterias")
+      await firestore
+          .collection("cafeterias")
           .get()
           .then((QuerySnapshot<Map<String, dynamic>> cafesSnapshot) {
-            _cafeterias = cafesSnapshot.docs.map((QueryDocumentSnapshot<Map<String, dynamic>> cafeSnapshot) {
-              Map<String, dynamic> cafeMap = cafeSnapshot.data();
-              cafeMap["id"] = cafeSnapshot.id;
-              return Cafeteria.fromMap(cafeMap);
-            }).toList();
+        _cafeterias = cafesSnapshot.docs
+            .map((QueryDocumentSnapshot<Map<String, dynamic>> cafeSnapshot) {
+          Map<String, dynamic> cafeMap = cafeSnapshot.data();
+          cafeMap["id"] = cafeSnapshot.id;
+          return Cafeteria.fromMap(cafeMap);
+        }).toList();
       });
       emit(CafeteriasSuccessState(cafeteriasList: _cafeterias));
     } catch (e) {
@@ -216,21 +231,24 @@ class CafeteriasBloc extends Bloc<CafeteriasEvent, CafeteriasState> {
       emit(CafeteriasErrorState());
     }
   }
-  
+
   Future<void> _getRatings(GetRatingsEvent event, Emitter emit) async {
     emit(RatingsLoadingState());
     try {
       print("fetching");
-      await firestore.collection("ratings")
+      await firestore
+          .collection("ratings")
           .get()
           .then((QuerySnapshot<Map<String, dynamic>> ratingsSnapshot) {
-            _ratings = ratingsSnapshot.docs.map((QueryDocumentSnapshot<Map<String, dynamic>> ratingsSnapshot) {
-              Map<String, dynamic> ratingMap = ratingsSnapshot.data();
-              ratingMap["id"] = ratingsSnapshot.id;
-              return Rating.fromMap(ratingMap);
-          }).toList();
+        _ratings = ratingsSnapshot.docs
+            .map((QueryDocumentSnapshot<Map<String, dynamic>> ratingsSnapshot) {
+          Map<String, dynamic> ratingMap = ratingsSnapshot.data();
+          ratingMap["id"] = ratingsSnapshot.id;
+          return Rating.fromMap(ratingMap);
+        }).toList();
       });
-      emit(RatingsSuccessState(ratingList: _ratings, title: this._cafeteria?.title??"Ratings"));
+      emit(RatingsSuccessState(
+          ratingList: _ratings, title: this._cafeteria?.title ?? "Ratings"));
     } catch (e) {
       debugPrint(e.toString());
       emit(RatingsErrorState());
@@ -242,7 +260,8 @@ class CafeteriasBloc extends Bloc<CafeteriasEvent, CafeteriasState> {
       if (event.query.isEmpty) {
         emit(CafeteriasSuccessState(cafeteriasList: _cafeterias));
       } else {
-        var filtered = _cafeterias.where((element) => _contains(element, event.query.toLowerCase()));
+        var filtered = _cafeterias
+            .where((element) => _contains(element, event.query.toLowerCase()));
         emit(CafeteriasSuccessState(cafeteriasList: filtered.toList()));
       }
     } catch (e) {
@@ -258,18 +277,17 @@ class CafeteriasBloc extends Bloc<CafeteriasEvent, CafeteriasState> {
     emit(ViewMenuState(cafeteria: _cafeteria!));
   }
 
-  void favorite(String uid)async{
-    if(this._cafeteria != null && this._cafeteria!.favorites != null){
-      if(this._cafeteria!.favorites!.contains(uid)){
+  void favorite(String uid) async {
+    if (this._cafeteria != null && this._cafeteria!.favorites != null) {
+      if (this._cafeteria!.favorites!.contains(uid)) {
         this._cafeteria!.favorites!.remove(uid);
-      }
-      else{
+      } else {
         this._cafeteria!.favorites!.add(uid);
       }
     }
-    await firestore.collection("cafeterias")
-          .doc(this._cafeteria!.id)
-          .update(this._cafeteria!.toMap());
+    await firestore
+        .collection("cafeterias")
+        .doc(this._cafeteria!.id)
+        .update(this._cafeteria!.toMap());
   }
-
 }

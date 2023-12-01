@@ -1,16 +1,31 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:proyecto/bloc/auth/auth_bloc.dart';
+import 'package:proyecto/bloc/cafeterias/cafeterias_bloc.dart';
+import 'package:proyecto/models/cafeteria.dart';
 import 'package:proyecto/pages/Auth/login_page.dart';
+import 'package:proyecto/pages/Cafeterias/cafeteria_element_page.dart';
 import 'package:proyecto/pages/MyProfile/change_password_alert.dart';
 
 class MyProfilePage extends StatelessWidget {
   final int comments = 3;
   final int coffeReviews = 2;
-  const MyProfilePage({super.key});
+  MyProfilePage({super.key});
 
   static const imagePlaceholder =
       'https://i.natgeofe.com/n/548467d8-c5f1-4551-9f58-6817a8d2c45e/NationalGeographic_2572187_square.jpg';
+
+  final favoritesQuery = FirebaseFirestore.instance
+      .collection('cafeterias')
+      .where('favorites', arrayContains: FirebaseAuth.instance.currentUser!.uid)
+      .withConverter(
+        fromFirestore: (snapshot, options) =>
+            Cafeteria.fromMap(snapshot.data()!),
+        toFirestore: (cafeteria, options) => cafeteria.toMap(),
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -67,10 +82,38 @@ class MyProfilePage extends StatelessWidget {
                 )
               ],
             ),
-            Text(
-              'Has comentado $comments platillos en $coffeReviews cafeterias',
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.headlineSmall,
+            Expanded(
+              child: ExpansionTile(
+                title: const Text("Mis favoritos"),
+                children: [
+                  FirestoreListView<Cafeteria>(
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    query: favoritesQuery,
+                    itemBuilder: (context, doc) {
+                      var cafeteria = doc.data();
+                      return InkWell(
+                        onTap: () {
+                          context
+                              .read<CafeteriasBloc>()
+                              .setCafeteria(cafeteria);
+                          context
+                              .read<CafeteriasBloc>()
+                              .add(SelectCafeteriasEvent());
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => CafeteriaElementPage(),
+                          ));
+                        },
+                        child: ListTile(
+                          title: Text(cafeteria.title!),
+                          leading: Image.network(cafeteria.image!,
+                              fit: BoxFit.cover),
+                        ),
+                      );
+                    },
+                  )
+                ],
+              ),
             ),
             ElevatedButton(
               onPressed: () {
